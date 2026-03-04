@@ -1,0 +1,132 @@
+---
+title: 'usePlaceholder'
+description: 'Placeholder hook for development'
+---
+
+## Overview
+
+The `usePlaceholder` hook is a minimal utility hook included in the starter template for demonstration purposes. It returns a simple object with a null value and serves as an example of how to structure and export custom hooks.
+
+## Import
+
+```typescript
+import { usePlaceholder } from '@/hooks';
+```
+
+## Signature
+
+```typescript
+export const usePlaceholder = (): { value: null } => {
+  return { value: null };
+};
+```
+
+## Return Value
+
+<ResponseField name="value" type="null">
+  Always returns null
+</ResponseField>
+
+## Usage
+
+```typescript
+import { usePlaceholder } from '@/hooks';
+
+function ExampleScreen() {
+  const { value } = usePlaceholder();
+  
+  return (
+    <View>
+      <Text>Value: {JSON.stringify(value)}</Text>
+    </View>
+  );
+}
+```
+
+<Note>
+  This is a placeholder hook included in the starter template for demonstration purposes. In a real application, you would replace this with your own custom hooks that manage state, side effects, or reusable logic.
+</Note>
+
+## Creating Custom Hooks
+
+To add your own hooks, create them in the hooks directory and export from the index file:
+
+```typescript
+// src/hooks/useAuth.ts
+import { useState, useEffect } from 'react';
+
+export function useAuth() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Check authentication status
+    checkAuth().then(currentUser => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+  }, []);
+  
+  return { user, loading };
+}
+
+// src/hooks/index.ts
+export { useAuth } from './useAuth';
+export { usePlaceholder } from './usePlaceholder';
+```
+
+## Common Hook Patterns
+
+### State Management Hook
+
+```typescript
+export function useToggle(initialValue = false) {
+  const [value, setValue] = useState(initialValue);
+  const toggle = () => setValue(v => !v);
+  return [value, toggle] as const;
+}
+```
+
+### API Data Fetching Hook
+
+```typescript
+export function useData<T>(url: string) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [url]);
+  
+  return { data, loading, error };
+}
+```
+
+### Form Input Hook
+
+```typescript
+export function useInput(initialValue = '') {
+  const [value, setValue] = useState(initialValue);
+  const onChange = (text: string) => setValue(text);
+  const reset = () => setValue(initialValue);
+  
+  return { value, onChange, reset };
+}
+```
+
+## Best Practices
+
+- Prefix custom hooks with "use" to follow React conventions
+- Keep hooks focused on a single responsibility
+- Document the hook's purpose, parameters, and return value
+- Add TypeScript types for better IDE support
+- Write unit tests for complex hooks
+
+## Source
+
+Location: `src/hooks/index.ts:3`

@@ -1,0 +1,73 @@
+---
+title: 'Placeholder'
+description: 'Simple placeholder component for development'
+---
+
+## Overview
+
+The `Placeholder` component is a minimal utility component included in the starter template for demonstration purposes. It renders a simple text string and serves as an example of how to structure and export components.
+
+## Import
+
+```typescript
+import { Placeholder } from '@/components/common';
+```
+
+## Props
+
+<ParamField path="text" type="string" default="'placeholder'">
+  The text string to display
+</ParamField>
+
+## Signature
+
+```typescript
+export const Placeholder = ({ 
+  text = 'placeholder' 
+}: { 
+  text?: string 
+}) => text;
+```
+
+## Usage
+
+```typescript
+import { Placeholder } from '@/components/common';
+
+function ExampleScreen() {
+  return (
+    <View>
+      <Text>{Placeholder({ text: 'Hello World' })}</Text>
+      <Text>{Placeholder({})}</Text> {/* Displays 'placeholder' */}
+    </View>
+  );
+}
+```
+
+<Note>
+  This is a placeholder component included in the starter template for demonstration purposes. In a real application, you would replace this with your own custom components.
+</Note>
+
+## Source
+
+Location: `src/components/common/index.ts:1`
+
+## Extending Components
+
+To add your own components, create them in the appropriate directory and export from index files:
+
+```typescript
+// src/components/common/Card.tsx
+export function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title}>{title}</Text>
+      {children}
+    </View>
+  );
+}
+
+// src/components/common/index.ts
+export { Card } from './Card';
+export { Placeholder } from './Placeholder';
+```

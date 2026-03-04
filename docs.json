@@ -74,7 +74,14 @@
           {
             "group": "Components",
             "pages": [
-              "api/components/button"
+              "api/components/button",
+              "api/components/placeholder"
+            ]
+          },
+          {
+            "group": "Hooks",
+            "pages": [
+              "api/hooks/use-placeholder"
             ]
           },
           {
