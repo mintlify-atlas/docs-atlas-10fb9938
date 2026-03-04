@@ -1,0 +1,464 @@
+---
+title: Styling & Theming
+description: Learn how to use the theme system and apply consistent styles in the AgroVets app
+---
+
+## Overview
+
+The AgroVets app uses a centralized theme system to maintain consistent colors, spacing, and styling across all components and screens.
+
+## Theme Configuration
+
+The theme is defined in `src/theme/index.ts`:
+
+```tsx src/theme/index.ts
+export const colors = {
+  primary: '#0a84ff',
+  background: '#ffffff',
+  text: '#222',
+};
+
+export const spacing = {
+  s: 8,
+  m: 16,
+  l: 24,
+};
+```
+
+## Using Theme Values
+
+<Tabs>
+  <Tab title="Colors">
+    Import and use theme colors in your components:
+    
+    ```tsx
+    import { colors } from '../../theme';
+    import { StyleSheet } from 'react-native';
+    
+    const styles = StyleSheet.create({
+      container: {
+        backgroundColor: colors.background,
+      },
+      title: {
+        color: colors.text,
+      },
+      button: {
+        backgroundColor: colors.primary,
+      },
+    });
+    ```
+  </Tab>
+  
+  <Tab title="Spacing">
+    Use consistent spacing throughout your app:
+    
+    ```tsx
+    import { spacing } from '../../theme';
+    import { StyleSheet } from 'react-native';
+    
+    const styles = StyleSheet.create({
+      container: {
+        padding: spacing.m,        // 16
+        marginBottom: spacing.l,   // 24
+      },
+      item: {
+        marginTop: spacing.s,      // 8
+      },
+    });
+    ```
+  </Tab>
+  
+  <Tab title="Combined">
+    Combine colors and spacing for consistent UI:
+    
+    ```tsx
+    import { colors, spacing } from '../../theme';
+    import { StyleSheet } from 'react-native';
+    
+    const styles = StyleSheet.create({
+      card: {
+        backgroundColor: colors.background,
+        padding: spacing.m,
+        marginVertical: spacing.s,
+        borderRadius: 8,
+      },
+      cardTitle: {
+        color: colors.text,
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: spacing.s,
+      },
+    });
+    ```
+  </Tab>
+</Tabs>
+
+## Extending the Theme
+
+<Steps>
+  <Step title="Add new theme values">
+    Update `src/theme/index.ts` with additional values:
+    
+    ```tsx src/theme/index.ts
+    export const colors = {
+      primary: '#0a84ff',
+      background: '#ffffff',
+      text: '#222',
+      // Add new colors
+      secondary: '#6c757d',
+      success: '#28a745',
+      danger: '#dc3545',
+      warning: '#ffc107',
+      border: '#dee2e6',
+    };
+    
+    export const spacing = {
+      xs: 4,  // Extra small
+      s: 8,
+      m: 16,
+      l: 24,
+      xl: 32, // Extra large
+    };
+    
+    // Add typography
+    export const typography = {
+      h1: { fontSize: 32, fontWeight: '700' as const },
+      h2: { fontSize: 24, fontWeight: '600' as const },
+      h3: { fontSize: 20, fontWeight: '600' as const },
+      body: { fontSize: 16, fontWeight: '400' as const },
+      caption: { fontSize: 14, fontWeight: '400' as const },
+    };
+    
+    // Add border radius
+    export const borderRadius = {
+      small: 4,
+      medium: 8,
+      large: 16,
+      round: 9999,
+    };
+    ```
+  </Step>
+  
+  <Step title="Create a theme hook (optional)">
+    For more advanced theming, create a custom hook:
+    
+    ```tsx src/hooks/useTheme.ts
+    import { colors, spacing, typography, borderRadius } from '../theme';
+    
+    export const useTheme = () => {
+      return {
+        colors,
+        spacing,
+        typography,
+        borderRadius,
+      };
+    };
+    ```
+  </Step>
+  
+  <Step title="Use in components">
+    ```tsx
+    import { useTheme } from '../../hooks/useTheme';
+    
+    export default function MyComponent() {
+      const theme = useTheme();
+      
+      return (
+        <View style={{
+          backgroundColor: theme.colors.background,
+          padding: theme.spacing.m,
+          borderRadius: theme.borderRadius.medium,
+        }}>
+          <Text style={[
+            theme.typography.h2,
+            { color: theme.colors.text }
+          ]}>
+            Hello World
+          </Text>
+        </View>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Styling Patterns
+
+### Screen Styles
+
+All screens in the app follow a consistent pattern:
+
+```tsx
+import { StyleSheet } from 'react-native';
+import { spacing } from '../../theme';
+
+const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    padding: spacing.m  // Use theme spacing
+  },
+  title: { 
+    fontSize: 20, 
+    fontWeight: '600', 
+    marginBottom: spacing.s 
+  },
+});
+```
+
+### Component Styles
+
+The Button component uses theme colors:
+
+```tsx src/components/ui/Button.tsx
+import { StyleSheet } from 'react-native';
+import { colors } from '../../theme';
+
+const styles = StyleSheet.create({
+  btn: { 
+    paddingVertical: 10, 
+    paddingHorizontal: 16, 
+    backgroundColor: colors.primary,  // Theme color
+    borderRadius: 8 
+  },
+  txt: { 
+    color: '#fff', 
+    fontWeight: '600' 
+  },
+});
+```
+
+## Dark Mode Support
+
+<Note>
+To add dark mode support, you'll need to create separate color schemes and use React Context or a state management solution.
+</Note>
+
+Here's how to implement basic dark mode:
+
+<Steps>
+  <Step title="Define color schemes">
+    ```tsx src/theme/colors.ts
+    export const lightColors = {
+      primary: '#0a84ff',
+      background: '#ffffff',
+      text: '#222',
+      border: '#e0e0e0',
+    };
+    
+    export const darkColors = {
+      primary: '#0a84ff',
+      background: '#000000',
+      text: '#ffffff',
+      border: '#333333',
+    };
+    ```
+  </Step>
+  
+  <Step title="Create theme context">
+    ```tsx src/context/ThemeContext.tsx
+    import React, { createContext, useState, useContext } from 'react';
+    import { lightColors, darkColors } from '../theme/colors';
+    
+    type Theme = 'light' | 'dark';
+    
+    interface ThemeContextType {
+      theme: Theme;
+      colors: typeof lightColors;
+      toggleTheme: () => void;
+    }
+    
+    const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+    
+    export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+      const [theme, setTheme] = useState<Theme>('light');
+      
+      const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+      };
+      
+      const colors = theme === 'light' ? lightColors : darkColors;
+      
+      return (
+        <ThemeContext.Provider value={{ theme, colors, toggleTheme }}>
+          {children}
+        </ThemeContext.Provider>
+      );
+    };
+    
+    export const useTheme = () => {
+      const context = useContext(ThemeContext);
+      if (!context) throw new Error('useTheme must be used within ThemeProvider');
+      return context;
+    };
+    ```
+  </Step>
+  
+  <Step title="Use in app">
+    ```tsx App.tsx
+    import { ThemeProvider } from './src/context/ThemeContext';
+    
+    export default function App() {
+      return (
+        <ThemeProvider>
+          <AppNavigator />
+        </ThemeProvider>
+      );
+    }
+    ```
+    
+    Then in components:
+    
+    ```tsx
+    import { useTheme } from '../../context/ThemeContext';
+    
+    export default function MyComponent() {
+      const { colors, toggleTheme } = useTheme();
+      
+      return (
+        <View style={{ backgroundColor: colors.background }}>
+          <Text style={{ color: colors.text }}>Hello</Text>
+          <Button onPress={toggleTheme}>Toggle Theme</Button>
+        </View>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Best Practices
+
+<Tip>
+Always use theme values instead of hardcoded colors and spacing. This makes it easy to rebrand or add dark mode later.
+</Tip>
+
+### Do's
+
+- Use theme values: `backgroundColor: colors.primary`
+- Use spacing constants: `padding: spacing.m`
+- Keep styles in StyleSheet.create()
+- Extract common styles into shared components
+- Use meaningful color names (primary, success, danger)
+
+### Don'ts
+
+- Avoid hardcoded colors: `backgroundColor: '#0a84ff'`
+- Avoid magic numbers: `padding: 16`
+- Don't use inline styles for complex styling
+- Don't duplicate common styles across files
+
+## Common Style Patterns
+
+<CodeGroup>
+```tsx Centered Container
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.m,
+    backgroundColor: colors.background,
+  },
+});
+```
+
+```tsx Card Style
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    padding: spacing.m,
+    marginVertical: spacing.s,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+});
+```
+
+```tsx List Item
+const styles = StyleSheet.create({
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.m,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  listItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.text,
+  },
+});
+```
+</CodeGroup>
+
+## Typography System
+
+Create a consistent typography system:
+
+```tsx src/theme/typography.ts
+export const typography = {
+  h1: {
+    fontSize: 32,
+    fontWeight: '700' as const,
+    lineHeight: 40,
+  },
+  h2: {
+    fontSize: 24,
+    fontWeight: '600' as const,
+    lineHeight: 32,
+  },
+  h3: {
+    fontSize: 20,
+    fontWeight: '600' as const,
+    lineHeight: 28,
+  },
+  body: {
+    fontSize: 16,
+    fontWeight: '400' as const,
+    lineHeight: 24,
+  },
+  caption: {
+    fontSize: 14,
+    fontWeight: '400' as const,
+    lineHeight: 20,
+  },
+  button: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    lineHeight: 24,
+  },
+};
+```
+
+Use it in components:
+
+```tsx
+import { typography } from '../../theme/typography';
+
+const styles = StyleSheet.create({
+  title: {
+    ...typography.h2,
+    color: colors.text,
+  },
+  body: {
+    ...typography.body,
+    color: colors.text,
+  },
+});
+```
+
+<Warning>
+Be careful when spreading typography styles - make sure they don't conflict with other style properties.
+</Warning>
+
+## Next Steps
+
+- Learn about [creating screens](/guides/screens)
+- Explore [building components](/guides/components)
+- Understand [navigation patterns](/guides/navigation-patterns)

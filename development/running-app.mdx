@@ -1,0 +1,224 @@
+---
+title: Running the App
+description: Learn how to run AgroVetsApp on different platforms including Android, iOS, and web
+---
+
+## Prerequisites
+
+Before running the app, ensure you have:
+
+- **Node.js** (16+ recommended)
+- **npm** or **yarn** package manager
+- **Expo CLI** (optional but recommended)
+- For Android: Android Studio with an emulator or a physical device
+- For iOS: macOS with Xcode (iOS Simulator)
+
+## Installation
+
+First, install all project dependencies:
+
+```bash
+npm install
+```
+
+<Note>
+  The project uses Expo ~54.0.25 with React Native 0.81.5 and React 19.1.0.
+</Note>
+
+## Available Scripts
+
+The following npm scripts are available in `package.json`:
+
+### Start Development Server
+
+```bash
+npm start
+```
+
+This command starts the Expo development server (Metro bundler). Once started, you'll see a QR code and several options to open the app on different platforms.
+
+<Tip>
+  Use `expo start -c` or `npm start -- --reset-cache` to clear the Metro bundler cache if you encounter any caching issues.
+</Tip>
+
+### Run on Android
+
+```bash
+npm run android
+```
+
+This command starts the development server and automatically launches the app on:
+- A connected Android device (with USB debugging enabled), or
+- An Android emulator (if one is running)
+
+<Accordion title="Android Setup Requirements">
+  **Prerequisites:**
+  - Android Studio installed
+  - Android SDK and platform tools configured
+  - An Android emulator created, or
+  - A physical Android device with USB debugging enabled
+
+  **Troubleshooting:**
+  - Ensure `adb` is in your PATH
+  - Check that your device/emulator is visible with `adb devices`
+  - If the app doesn't install, try `adb reverse tcp:8081 tcp:8081`
+</Accordion>
+
+### Run on iOS
+
+```bash
+npm run ios
+```
+
+This command starts the development server and launches the app in the iOS Simulator.
+
+<Warning>
+  iOS development requires macOS with Xcode installed. This command will not work on Windows or Linux.
+</Warning>
+
+<Accordion title="iOS Setup Requirements">
+  **Prerequisites:**
+  - macOS operating system
+  - Xcode installed from the App Store
+  - Xcode Command Line Tools installed
+  - iOS Simulator configured
+
+  **First-time setup:**
+  ```bash
+  xcode-select --install
+  ```
+
+  **Troubleshooting:**
+  - Open Xcode at least once to accept the license agreement
+  - Ensure you have at least one iOS Simulator installed
+  - Check available simulators: `xcrun simctl list devices`
+</Accordion>
+
+### Run on Web
+
+```bash
+npm run web
+```
+
+This command starts the development server and opens the app in your default web browser.
+
+<Note>
+  While Expo supports web, some React Native features may behave differently or require web-specific implementations.
+</Note>
+
+## Running with Expo Go
+
+For quick testing on physical devices without native builds:
+
+1. Install **Expo Go** app on your mobile device:
+   - [Android - Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
+   - [iOS - App Store](https://apps.apple.com/app/expo-go/id982107779)
+
+2. Start the development server:
+   ```bash
+   npm start
+   ```
+
+3. Scan the QR code:
+   - **Android**: Use the Expo Go app to scan the QR code
+   - **iOS**: Use the Camera app to scan, then open with Expo Go
+
+<Tip>
+  Make sure your mobile device and development machine are on the same Wi-Fi network.
+</Tip>
+
+## Development Workflow
+
+### Fast Refresh
+
+The app supports Fast Refresh (Hot Reloading), which means:
+- Changes to your code will automatically update in the running app
+- Component state is preserved during most updates
+- No need to restart the app for most changes
+
+### Clearing Cache
+
+If you encounter unexpected behavior or stale data:
+
+<CodeGroup>
+```bash Expo
+expo start -c
+```
+
+```bash npm
+npm start -- --reset-cache
+```
+
+```bash Full Reset
+rm -rf node_modules
+rm package-lock.json
+npm install
+npm start -- --reset-cache
+```
+</CodeGroup>
+
+### Testing Changes
+
+1. **Development Server**: Keep `npm start` running in a terminal
+2. **Make Changes**: Edit files in `src/` directory
+3. **See Updates**: Changes appear automatically via Fast Refresh
+4. **Debugging**: Press `m` in the terminal to open the developer menu
+
+## Platform-Specific Commands
+
+### Choosing a Specific Simulator/Emulator
+
+<CodeGroup>
+```bash iOS Specific Device
+# List available simulators
+xcrun simctl list devices
+
+# Launch specific simulator
+expo start --ios --simulator="iPhone 15 Pro"
+```
+
+```bash Android Specific Emulator
+# List available emulators
+emulator -list-avds
+
+# Start specific emulator
+emulator -avd Pixel_5_API_33
+
+# Then run the app
+npm run android
+```
+</CodeGroup>
+
+### Opening Developer Menu
+
+While the app is running:
+
+- **Android Emulator**: Press `Ctrl + M` (Windows/Linux) or `Cmd + M` (macOS)
+- **Android Device**: Shake the device
+- **iOS Simulator**: Press `Cmd + D`
+- **iOS Device**: Shake the device
+- **Terminal**: Press `m` in the terminal where Metro is running
+
+## Environment Variables
+
+To use environment-specific configurations:
+
+1. Create environment files (if needed):
+   ```bash
+   touch .env.development
+   touch .env.production
+   ```
+
+2. Install `react-native-dotenv` or use Expo's built-in environment support
+
+<Warning>
+  Never commit sensitive credentials to version control. Use `.gitignore` for environment files containing secrets.
+</Warning>
+
+## Next Steps
+
+Now that you can run the app, explore:
+
+- [Troubleshooting](/development/troubleshooting) - Common issues and solutions
+- [Best Practices](/development/best-practices) - Development guidelines
+- [Project Structure](/architecture/project-structure) - Understanding the codebase

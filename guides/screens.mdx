@@ -1,0 +1,211 @@
+---
+title: Creating Screens
+description: Learn how to create new screens in the AgroVets app with practical examples
+---
+
+## Overview
+
+Screens are the main UI components that users interact with in your app. This guide shows you how to create new screens using examples from the existing codebase.
+
+## Screen Structure
+
+All screens in the AgroVets app follow a consistent pattern. They are located in `src/screens/` with each screen in its own folder.
+
+```
+src/screens/
+├── Home/
+│   └── HomeScreen.tsx
+├── Profile/
+│   └── ProfileScreen.tsx
+└── Settings/
+    └── SettingsScreen.tsx
+```
+
+## Basic Screen Example
+
+Here's the `HomeScreen` component from `src/screens/Home/HomeScreen.tsx`:
+
+```tsx src/screens/Home/HomeScreen.tsx
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function HomeScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Inicio</Text>
+      <Text>Pantalla Home — contenido de ejemplo.</Text>
+      <Text>
+        Fecha formateada de hoy: {new Date().toISOString().split('T')[0]}
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
+  title: { fontSize: 20, fontWeight: '600', marginBottom: 8 },
+});
+```
+
+## Creating a New Screen
+
+<Steps>
+  <Step title="Create the screen folder">
+    Create a new folder in `src/screens/` for your screen:
+    
+    ```bash
+    mkdir src/screens/YourScreen
+    ```
+  </Step>
+  
+  <Step title="Create the screen component">
+    Create a new TypeScript file for your screen component:
+    
+    ```tsx src/screens/YourScreen/YourScreenScreen.tsx
+    import React from 'react';
+    import { View, Text, StyleSheet } from 'react-native';
+    
+    export default function YourScreenScreen() {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Your Screen Title</Text>
+          <Text>Your screen content goes here.</Text>
+        </View>
+      );
+    }
+    
+    const styles = StyleSheet.create({
+      container: { 
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: 16 
+      },
+      title: { 
+        fontSize: 20, 
+        fontWeight: '600', 
+        marginBottom: 8 
+      },
+    });
+    ```
+  </Step>
+  
+  <Step title="Add navigation types">
+    Update `src/navigation/types.ts` to include your new screen:
+    
+    ```tsx src/navigation/types.ts
+    export type RootStackParamList = {
+      Home: undefined;
+      Profile: undefined;
+      Settings: undefined;
+      YourScreen: undefined; // Add your screen here
+    };
+    ```
+  </Step>
+  
+  <Step title="Register in navigator">
+    Add your screen to the appropriate navigator (Tab, Stack, or Drawer). For example, in `TabNavigator.tsx`:
+    
+    ```tsx src/navigation/TabNavigator.tsx
+    import YourScreenScreen from '../screens/YourScreen/YourScreenScreen';
+    
+    // Inside the Tab.Navigator
+    <Tab.Screen name="YourScreen" component={YourScreenScreen} />
+    ```
+  </Step>
+</Steps>
+
+## Screen Examples
+
+<Tabs>
+  <Tab title="Home Screen">
+    The Home screen displays dynamic content and formatted data:
+    
+    ```tsx
+    export default function HomeScreen() {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Inicio</Text>
+          <Text>Pantalla Home — contenido de ejemplo.</Text>
+          <Text>
+            Fecha formateada de hoy: {new Date().toISOString().split('T')[0]}
+          </Text>
+        </View>
+      );
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Profile Screen">
+    The Profile screen shows user information:
+    
+    ```tsx
+    export default function ProfileScreen() {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Perfil</Text>
+          <Text>Pantalla Perfil — contenido de ejemplo.</Text>
+        </View>
+      );
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Settings Screen">
+    The Settings screen provides configuration options:
+    
+    ```tsx
+    export default function SettingsScreen() {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Ajustes</Text>
+          <Text>Pantalla Settings — contenido de ejemplo.</Text>
+        </View>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+<Tip>
+Keep your screens focused on presentation logic. Move business logic to custom hooks or services.
+</Tip>
+
+<Note>
+All screens in the codebase use a consistent styling pattern with centered content and proper padding.
+</Note>
+
+### Consistent Styling
+
+Use the same base styles across screens for consistency:
+
+```tsx
+const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    padding: 16 
+  },
+  title: { 
+    fontSize: 20, 
+    fontWeight: '600', 
+    marginBottom: 8 
+  },
+});
+```
+
+### Screen Organization
+
+- Each screen should be in its own folder
+- Use the naming convention `ScreenNameScreen.tsx`
+- Keep related components in the same folder
+- Extract complex logic into hooks
+
+## Next Steps
+
+- Learn about [building reusable components](/guides/components)
+- Explore [navigation patterns](/guides/navigation-patterns)
+- Understand [styling and theming](/guides/styling-theming)

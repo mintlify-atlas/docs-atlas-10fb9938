@@ -1,0 +1,108 @@
+---
+title: Introduction
+description: Welcome to AgroVets App - A React Native mobile application template built with Expo
+---
+
+# Welcome to AgroVets App
+
+AgroVets App is a mobile application template built with React Native and Expo, designed to provide a solid foundation for agricultural veterinary services applications. It features a modern navigation system and a well-organized project structure.
+
+## What is AgroVets App?
+
+AgroVets App is a small template/seed project for building React Native applications using Expo. It provides a pre-configured navigation system with bottom tabs, stack navigation, and drawer navigation patterns, allowing you to quickly start building features without setting up the basic infrastructure.
+
+<Note>
+This is a template project designed to be customized for your specific agricultural veterinary service needs.
+</Note>
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Multi-Layer Navigation" icon="compass">
+    Built-in support for Stack, Tab, and Drawer navigation patterns using React Navigation
+  </Card>
+  
+  <Card title="TypeScript Support" icon="code">
+    Fully typed with TypeScript for better development experience and code quality
+  </Card>
+  
+  <Card title="Expo Framework" icon="mobile">
+    Powered by Expo SDK 54 for rapid development and easy deployment
+  </Card>
+  
+  <Card title="Organized Structure" icon="folder-tree">
+    Well-organized folder structure with screens, components, hooks, contexts, and utilities
+  </Card>
+</CardGroup>
+
+## Technology Stack
+
+The app is built with modern React Native technologies:
+
+- **React Native** `0.81.5` - Cross-platform mobile framework
+- **React** `19.1.0` - UI library
+- **Expo** `~54.0.25` - Development framework and tools
+- **React Navigation** `7.x` - Navigation library
+  - Native Stack Navigator
+  - Bottom Tabs Navigator
+  - Drawer Navigator (prepared)
+- **TypeScript** `~5.9.2` - Type safety and better DX
+
+## Project Structure
+
+The application follows a clean and scalable architecture:
+
+```
+AgroVetsApp/
+├── App.tsx                 # App entry point
+├── index.ts               # Root component registration
+├── src/
+│   ├── navigation/        # Navigation configuration
+│   │   ├── AppNavigator.tsx
+│   │   ├── StackNavigator.tsx
+│   │   ├── TabNavigator.tsx
+│   │   ├── DrawerNavigator.tsx
+│   │   └── types.ts
+│   ├── screens/           # App screens
+│   │   ├── Home/
+│   │   ├── Profile/
+│   │   └── Settings/
+│   ├── components/        # Reusable UI components
+│   │   ├── ui/
+│   │   └── common/
+│   ├── hooks/            # Custom React hooks
+│   ├── contexts/         # React contexts for state
+│   ├── services/         # API and external services
+│   ├── utils/           # Utility functions
+│   └── theme/           # Styling and theming
+└── package.json
+```
+
+## Who is This For?
+
+AgroVets App is ideal for:
+
+- **Developers** building agricultural or veterinary service applications
+- **Teams** looking for a pre-configured React Native + Expo starter template
+- **Projects** that need a solid navigation foundation from day one
+- **Anyone** wanting to quickly prototype mobile app ideas with modern tools
+
+<Tip>
+The template includes three sample screens (Home, Profile, Settings) connected through bottom tab navigation - perfect for understanding the navigation flow before building your own features.
+</Tip>
+
+## Getting Started
+
+Ready to start building? Check out the [Installation](/installation) guide to set up your development environment, or jump straight to the [Quickstart](/quickstart) to get the app running in minutes.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install Node.js, clone the repository, and set up all dependencies
+  </Card>
+  
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get the app running quickly and explore the pre-built screens
+  </Card>
+</CardGroup>

@@ -1,0 +1,157 @@
+---
+title: 'TabNavigator'
+description: 'Bottom tab navigator for managing primary app sections and navigation tabs'
+---
+
+## Overview
+
+The `TabNavigator` component implements React Navigation's bottom tab navigator pattern. It provides the primary navigation interface for the AgroVets application with three main sections: Home, Profile, and Settings.
+
+## Usage
+
+```tsx
+import TabNavigator from './navigation/TabNavigator';
+
+export default function MainApp() {
+  return <TabNavigator />;
+}
+```
+
+## Implementation
+
+```tsx
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from '../screens/Home/HomeScreen';
+import ProfileScreen from '../screens/Profile/ProfileScreen';
+import SettingsScreen from '../screens/Settings/SettingsScreen';
+import { RootStackParamList } from './types';
+
+const Tab = createBottomTabNavigator<RootStackParamList>();
+
+export default function TabNavigator() {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
+  );
+}
+```
+
+## Props
+
+This component does not accept any props.
+
+## Configuration
+
+### Screen Options
+
+<ParamField path="headerShown" type="boolean" default="false">
+  Controls whether the navigation header is displayed. Currently set to `false` to hide headers for all tab screens.
+</ParamField>
+
+## Type Definition
+
+The navigator uses the `RootStackParamList` type for type-safe navigation:
+
+```tsx
+import { RootStackParamList } from './types';
+
+const Tab = createBottomTabNavigator<RootStackParamList>();
+```
+
+### RootStackParamList
+
+```tsx
+export type RootStackParamList = {
+  Home: undefined;
+  Profile: undefined;
+  Settings: undefined;
+};
+```
+
+## Tab Screens
+
+The navigator includes three primary tabs:
+
+### Home Tab
+
+<ParamField path="name" type="string" default="Home">
+  Displays the main home screen with primary app features and content.
+  
+  **Component**: `HomeScreen`
+</ParamField>
+
+### Profile Tab
+
+<ParamField path="name" type="string" default="Profile">
+  Shows user profile information and account details.
+  
+  **Component**: `ProfileScreen`
+</ParamField>
+
+### Settings Tab
+
+<ParamField path="name" type="string" default="Settings">
+  Provides access to app settings and configuration options.
+  
+  **Component**: `SettingsScreen`
+</ParamField>
+
+## Navigation Methods
+
+Access tab navigation within your components:
+
+```tsx
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { RootStackParamList } from './navigation/types';
+
+type TabNavigationProp = BottomTabNavigationProp<RootStackParamList>;
+
+function MyComponent() {
+  const navigation = useNavigation<TabNavigationProp>();
+  
+  // Navigate to a tab
+  navigation.navigate('Profile');
+  
+  // Jump to a tab (doesn't trigger animation if already on that tab)
+  navigation.jumpTo('Settings');
+}
+```
+
+## Customization
+
+You can customize the tab bar appearance by adding options to individual screens:
+
+```tsx
+<Tab.Screen 
+  name="Home" 
+  component={HomeScreen}
+  options={{
+    tabBarLabel: 'Home',
+    tabBarIcon: ({ color, size }) => (
+      <Icon name="home" color={color} size={size} />
+    ),
+  }}
+/>
+```
+
+<Note>
+The bottom tab navigator automatically handles the tab bar visibility and provides smooth transitions between tabs. Each tab maintains its own navigation state.
+</Note>
+
+## Dependencies
+
+- `@react-navigation/bottom-tabs` - Bottom tab navigator
+- `HomeScreen` - Main home screen component
+- `ProfileScreen` - User profile screen component
+- `SettingsScreen` - Settings screen component
+- `RootStackParamList` - Type definitions
+
+## Related
+
+- [AppNavigator](/api/navigation/app-navigator)
+- [StackNavigator](/api/navigation/stack-navigator)

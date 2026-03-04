@@ -1,0 +1,402 @@
+---
+title: Building Components
+description: Learn how to create reusable UI components in the AgroVets app
+---
+
+## Overview
+
+Reusable components are the building blocks of your app. They help maintain consistency, reduce code duplication, and make your codebase easier to maintain.
+
+## Component Structure
+
+Components are organized in `src/components/` with different categories:
+
+```
+src/components/
+├── ui/
+│   └── Button.tsx
+└── common/
+    └── index.ts
+```
+
+## The Button Component
+
+Let's examine the `Button` component from `src/components/ui/Button.tsx` as a practical example:
+
+```tsx src/components/ui/Button.tsx
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+
+export default function Button({ 
+  children, 
+  onPress 
+}: { 
+  children: React.ReactNode; 
+  onPress?: () => void 
+}) {
+  return (
+    <TouchableOpacity style={styles.btn} onPress={onPress} activeOpacity={0.8}>
+      <Text style={styles.txt}>{children}</Text>
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  btn: { 
+    paddingVertical: 10, 
+    paddingHorizontal: 16, 
+    backgroundColor: '#0a84ff', 
+    borderRadius: 8 
+  },
+  txt: { 
+    color: '#fff', 
+    fontWeight: '600' 
+  },
+});
+```
+
+## Key Component Patterns
+
+### TypeScript Props Interface
+
+The Button component uses inline TypeScript types for props:
+
+```tsx
+{ children: React.ReactNode; onPress?: () => void }
+```
+
+For more complex components, define a separate interface:
+
+```tsx
+interface ButtonProps {
+  children: React.ReactNode;
+  onPress?: () => void;
+  variant?: 'primary' | 'secondary';
+  disabled?: boolean;
+}
+
+export default function Button({ 
+  children, 
+  onPress, 
+  variant = 'primary',
+  disabled = false 
+}: ButtonProps) {
+  // Component logic
+}
+```
+
+### Active Feedback
+
+The Button uses `activeOpacity={0.8}` to provide visual feedback when pressed:
+
+```tsx
+<TouchableOpacity style={styles.btn} onPress={onPress} activeOpacity={0.8}>
+```
+
+## Creating a New Component
+
+<Steps>
+  <Step title="Create the component file">
+    Create a new file in the appropriate folder (`ui/` for UI components, `common/` for shared utilities):
+    
+    ```bash
+    touch src/components/ui/YourComponent.tsx
+    ```
+  </Step>
+  
+  <Step title="Define the component structure">
+    ```tsx src/components/ui/YourComponent.tsx
+    import React from 'react';
+    import { View, Text, StyleSheet } from 'react-native';
+    
+    interface YourComponentProps {
+      title: string;
+      subtitle?: string;
+    }
+    
+    export default function YourComponent({ 
+      title, 
+      subtitle 
+    }: YourComponentProps) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>{title}</Text>
+          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+        </View>
+      );
+    }
+    
+    const styles = StyleSheet.create({
+      container: {
+        padding: 16,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 8,
+      },
+      title: {
+        fontSize: 16,
+        fontWeight: '600',
+      },
+      subtitle: {
+        fontSize: 14,
+        color: '#666',
+        marginTop: 4,
+      },
+    });
+    ```
+  </Step>
+  
+  <Step title="Export from index (optional)">
+    For better organization, export from a barrel file:
+    
+    ```tsx src/components/ui/index.ts
+    export { default as Button } from './Button';
+    export { default as YourComponent } from './YourComponent';
+    ```
+  </Step>
+  
+  <Step title="Use in screens">
+    Import and use your component:
+    
+    ```tsx
+    import YourComponent from '../components/ui/YourComponent';
+    
+    export default function MyScreen() {
+      return (
+        <View>
+          <YourComponent title="Hello" subtitle="World" />
+        </View>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Component Variants
+
+<Tabs>
+  <Tab title="Basic Button">
+    The simplest form with just text and action:
+    
+    ```tsx
+    <Button onPress={() => console.log('Pressed')}>
+      Click Me
+    </Button>
+    ```
+  </Tab>
+  
+  <Tab title="With Variants">
+    Extend the Button to support different styles:
+    
+    ```tsx
+    interface ButtonProps {
+      children: React.ReactNode;
+      onPress?: () => void;
+      variant?: 'primary' | 'secondary';
+    }
+    
+    export default function Button({ 
+      variant = 'primary',
+      ...props 
+    }: ButtonProps) {
+      const buttonStyle = variant === 'primary' 
+        ? styles.primaryBtn 
+        : styles.secondaryBtn;
+      
+      return (
+        <TouchableOpacity style={buttonStyle} {...props}>
+          <Text style={styles.txt}>{props.children}</Text>
+        </TouchableOpacity>
+      );
+    }
+    ```
+  </Tab>
+  
+  <Tab title="With State">
+    Add loading or disabled states:
+    
+    ```tsx
+    interface ButtonProps {
+      children: React.ReactNode;
+      onPress?: () => void;
+      loading?: boolean;
+      disabled?: boolean;
+    }
+    
+    export default function Button({ 
+      loading,
+      disabled,
+      onPress,
+      children 
+    }: ButtonProps) {
+      return (
+        <TouchableOpacity 
+          style={[
+            styles.btn, 
+            (disabled || loading) && styles.disabled
+          ]}
+          onPress={onPress}
+          disabled={disabled || loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.txt}>{children}</Text>
+          )}
+        </TouchableOpacity>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Using Theme Values
+
+Integrate with the app's theme system from `src/theme/index.ts`:
+
+```tsx
+import { colors } from '../../theme';
+
+const styles = StyleSheet.create({
+  btn: { 
+    backgroundColor: colors.primary, // Use theme color
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  txt: { 
+    color: '#fff', 
+    fontWeight: '600' 
+  },
+});
+```
+
+<Tip>
+Always use theme values for colors and spacing to maintain consistency across your app.
+</Tip>
+
+## Best Practices
+
+<Note>
+Keep components small and focused. Each component should do one thing well.
+</Note>
+
+### Component Guidelines
+
+1. **Single Responsibility** - Each component should have one clear purpose
+2. **TypeScript Types** - Always define prop types for type safety
+3. **Default Props** - Provide sensible defaults for optional props
+4. **Accessibility** - Use `accessibilityLabel` and `accessibilityRole` for better UX
+5. **Performance** - Use `React.memo()` for components that receive stable props
+
+### Naming Conventions
+
+- Use PascalCase for component names: `Button`, `CardView`
+- Use camelCase for prop names: `onPress`, `isLoading`
+- Be descriptive: `SubmitButton` is better than `Btn`
+
+### File Organization
+
+```
+components/
+├── ui/           # Pure UI components (Button, Card, Input)
+├── common/       # Shared utility components
+└── features/     # Feature-specific components
+```
+
+## Example: Enhanced Button
+
+Here's an enhanced version of the Button component with more features:
+
+```tsx
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { colors, spacing } from '../../theme';
+
+interface ButtonProps {
+  children: React.ReactNode;
+  onPress?: () => void;
+  variant?: 'primary' | 'secondary' | 'outline';
+  size?: 'small' | 'medium' | 'large';
+  loading?: boolean;
+  disabled?: boolean;
+}
+
+export default function Button({ 
+  children, 
+  onPress,
+  variant = 'primary',
+  size = 'medium',
+  loading = false,
+  disabled = false,
+}: ButtonProps) {
+  const getButtonStyle = () => {
+    const base = [styles.btn, styles[size]];
+    if (variant === 'secondary') base.push(styles.secondary);
+    if (variant === 'outline') base.push(styles.outline);
+    if (disabled || loading) base.push(styles.disabled);
+    return base;
+  };
+
+  return (
+    <TouchableOpacity 
+      style={getButtonStyle()} 
+      onPress={onPress} 
+      activeOpacity={0.8}
+      disabled={disabled || loading}
+    >
+      {loading ? (
+        <ActivityIndicator color={variant === 'outline' ? colors.primary : '#fff'} />
+      ) : (
+        <Text style={[styles.txt, variant === 'outline' && styles.outlineTxt]}>
+          {children}
+        </Text>
+      )}
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  btn: { 
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  small: {
+    paddingVertical: spacing.s,
+    paddingHorizontal: spacing.m,
+  },
+  medium: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  large: {
+    paddingVertical: spacing.m,
+    paddingHorizontal: spacing.l,
+  },
+  secondary: {
+    backgroundColor: '#6c757d',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  txt: { 
+    color: '#fff', 
+    fontWeight: '600' 
+  },
+  outlineTxt: {
+    color: colors.primary,
+  },
+});
+```
+
+## Next Steps
+
+- Learn about [styling and theming](/guides/styling-theming)
+- Explore [navigation patterns](/guides/navigation-patterns)
+- Understand [adding new features](/guides/adding-features)

@@ -1,0 +1,573 @@
+---
+title: 'Project Structure'
+description: 'Detailed explanation of the file and folder organization in AgroVetsApp'
+---
+
+## Overview
+
+AgroVetsApp follows a feature-based folder structure that promotes scalability, maintainability, and clear separation of concerns. This document provides a comprehensive guide to the project's organization.
+
+## Root Directory Structure
+
+```
+AgroVetsApp/
+├── assets/                 # Static assets (images, fonts, icons)
+│   ├── icon.png
+│   ├── splash-icon.png
+│   ├── adaptive-icon.png
+│   └── favicon.png
+├── src/                    # Source code directory
+│   ├── components/         # Reusable components
+│   ├── contexts/           # React Context providers
+│   ├── hooks/              # Custom React hooks
+│   ├── navigation/         # Navigation configuration
+│   ├── screens/            # Screen components
+│   ├── services/           # API and business logic
+│   ├── theme/              # Styling and theming
+│   └── utils/              # Utility functions
+├── App.tsx                 # Application entry point
+├── index.ts                # Expo entry file
+├── app.json                # Expo configuration
+├── package.json            # Dependencies and scripts
+└── tsconfig.json           # TypeScript configuration
+```
+
+## Source Directory (`src/`)
+
+### Complete Source Tree
+
+```
+src/
+├── components/
+│   ├── common/
+│   │   └── index.ts
+│   └── ui/
+│       └── Button.tsx
+├── hooks/
+│   └── index.ts
+├── navigation/
+│   ├── AppNavigator.tsx
+│   ├── DrawerNavigator.tsx
+│   ├── StackNavigator.tsx
+│   ├── TabNavigator.tsx
+│   └── types.ts
+├── screens/
+│   ├── Home/
+│   │   └── HomeScreen.tsx
+│   ├── Profile/
+│   │   └── ProfileScreen.tsx
+│   └── Settings/
+│       └── SettingsScreen.tsx
+├── services/
+│   └── api.ts
+├── theme/
+│   └── index.ts
+└── utils/
+    └── index.ts
+```
+
+## Directory Breakdown
+
+<Tabs>
+  <Tab title="Components">
+    ### Components Directory
+    
+    **Path**: `src/components/`
+    
+    Houses all reusable UI components organized by type.
+    
+    #### UI Components (`src/components/ui/`)
+    
+    Reusable, generic UI components used across the application.
+    
+    **Example: Button Component**
+    
+    ```typescript src/components/ui/Button.tsx
+    import React from 'react';
+    import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+    
+    export default function Button({ 
+      children, 
+      onPress 
+    }: { 
+      children: React.ReactNode; 
+      onPress?: () => void 
+    }) {
+      return (
+        <TouchableOpacity 
+          style={styles.btn} 
+          onPress={onPress} 
+          activeOpacity={0.8}
+        >
+          <Text style={styles.txt}>{children}</Text>
+        </TouchableOpacity>
+      );
+    }
+    
+    const styles = StyleSheet.create({
+      btn: { 
+        paddingVertical: 10, 
+        paddingHorizontal: 16, 
+        backgroundColor: '#0a84ff', 
+        borderRadius: 8 
+      },
+      txt: { 
+        color: '#fff', 
+        fontWeight: '600' 
+      },
+    });
+    ```
+    
+    #### Common Components (`src/components/common/`)
+    
+    Application-specific shared components (headers, footers, layout wrappers).
+    
+    **File**: `src/components/common/index.ts`
+    
+    Used for exporting common components for easy imports.
+    
+    <Note>
+      Components are organized by specificity: `ui/` for generic, `common/` for app-specific.
+    </Note>
+  </Tab>
+  
+  <Tab title="Navigation">
+    ### Navigation Directory
+    
+    **Path**: `src/navigation/`
+    
+    Contains all navigation-related configuration and navigators.
+    
+    #### Files
+    
+    | File | Purpose | Lines |
+    |------|---------|-------|
+    | `AppNavigator.tsx` | Root navigation container | 12 |
+    | `StackNavigator.tsx` | Stack-based navigation | 15 |
+    | `TabNavigator.tsx` | Bottom tab navigation | 19 |
+    | `DrawerNavigator.tsx` | Drawer navigation (placeholder) | 16 |
+    | `types.ts` | Navigation type definitions | 6 |
+    
+    #### Type Definitions
+    
+    ```typescript src/navigation/types.ts
+    export type RootStackParamList = {
+      Home: undefined;
+      Profile: undefined;
+      Settings: undefined;
+    };
+    ```
+    
+    This TypeScript type ensures type-safe navigation throughout the app.
+    
+    <Info>
+      See [Navigation System](/architecture/navigation-system) for detailed navigation architecture.
+    </Info>
+  </Tab>
+  
+  <Tab title="Screens">
+    ### Screens Directory
+    
+    **Path**: `src/screens/`
+    
+    Contains all screen components, organized by feature.
+    
+    #### Screen Organization
+    
+    Each screen has its own directory for better organization:
+    
+    ```
+    screens/
+    ├── Home/
+    │   └── HomeScreen.tsx
+    ├── Profile/
+    │   └── ProfileScreen.tsx
+    └── Settings/
+        └── SettingsScreen.tsx
+    ```
+    
+    This structure allows for:
+    - Screen-specific components
+    - Screen-specific hooks
+    - Screen-specific styles
+    - Easy to locate and maintain
+    
+    #### Example Screen
+    
+    ```typescript src/screens/Home/HomeScreen.tsx
+    import React from 'react';
+    import { View, Text, StyleSheet } from 'react-native';
+    
+    export default function HomeScreen() {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Inicio</Text>
+          <Text>Pantalla Home — contenido de ejemplo.</Text>
+          <Text>
+            Fecha formateada de hoy: {new Date().toISOString().split('T')[0]}
+          </Text>
+        </View>
+      );
+    }
+    
+    const styles = StyleSheet.create({
+      container: { 
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: 16 
+      },
+      title: { 
+        fontSize: 20, 
+        fontWeight: '600', 
+        marginBottom: 8 
+      },
+    });
+    ```
+    
+    #### Current Screens
+    
+    <CardGroup cols={3}>
+      <Card title="Home" icon="house">
+        Main landing screen with app overview
+      </Card>
+      <Card title="Profile" icon="user">
+        User profile and account settings
+      </Card>
+      <Card title="Settings" icon="gear">
+        App configuration and preferences
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Services">
+    ### Services Directory
+    
+    **Path**: `src/services/`
+    
+    Houses business logic, API integrations, and data management.
+    
+    #### API Service
+    
+    ```typescript src/services/api.ts
+    // Servicios y llamadas a APIs
+    
+    export async function fetchExample() {
+      // placeholder: implementa fetch real según tu backend
+      return { ok: true };
+    }
+    ```
+    
+    #### Service Layer Pattern
+    
+    Services provide:
+    - **Abstraction**: Hide implementation details from components
+    - **Reusability**: Share logic across multiple screens
+    - **Testability**: Easy to mock and test
+    - **Maintainability**: Centralized business logic
+    
+    #### Recommended Service Structure
+    
+    ```typescript
+    services/
+    ├── api.ts              # Base API configuration
+    ├── auth.service.ts     # Authentication services
+    ├── user.service.ts     # User management
+    └── analytics.service.ts # Analytics tracking
+    ```
+  </Tab>
+  
+  <Tab title="Other Directories">
+    ### Hooks Directory
+    
+    **Path**: `src/hooks/`
+    
+    Custom React hooks for shared logic.
+    
+    ```typescript
+    // Example hooks structure
+    hooks/
+    ├── index.ts
+    ├── useAuth.ts
+    ├── useApi.ts
+    └── useTheme.ts
+    ```
+    
+    ### Theme Directory
+    
+    **Path**: `src/theme/`
+    
+    Centralized styling, colors, typography, and spacing.
+    
+    ```typescript
+    // Example theme structure
+    theme/
+    ├── index.ts
+    ├── colors.ts
+    ├── typography.ts
+    └── spacing.ts
+    ```
+    
+    ### Utils Directory
+    
+    **Path**: `src/utils/`
+    
+    Utility functions and helpers.
+    
+    ```typescript
+    // Example utils structure
+    utils/
+    ├── index.ts
+    ├── formatters.ts
+    ├── validators.ts
+    └── helpers.ts
+    ```
+  </Tab>
+</Tabs>
+
+## Root Files
+
+### Application Entry Point
+
+<Accordion title="App.tsx">
+  **Path**: `App.tsx`
+  
+  **Lines**: 13
+  
+  The main entry point for the React Native application.
+  
+  ```typescript App.tsx
+  import React from 'react';
+  import { StatusBar } from 'expo-status-bar';
+  import AppNavigator from './src/navigation/AppNavigator';
+  
+  export default function App() {
+    return (
+      <>
+        <AppNavigator />
+        <StatusBar style="auto" />
+      </>
+    );
+  }
+  ```
+  
+  **Responsibilities**:
+  - Initialize the navigation system
+  - Set up global providers (future)
+  - Configure status bar
+</Accordion>
+
+<Accordion title="index.ts">
+  **Path**: `index.ts`
+  
+  Expo's entry file that registers the root component.
+  
+  ```typescript index.ts
+  import { registerRootComponent } from 'expo';
+  import App from './App';
+  
+  registerRootComponent(App);
+  ```
+</Accordion>
+
+### Configuration Files
+
+<Accordion title="package.json">
+  **Path**: `package.json`
+  
+  Defines project metadata, dependencies, and scripts.
+  
+  ```json package.json
+  {
+    "name": "agrovetsapp",
+    "version": "1.0.0",
+    "main": "index.ts",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web"
+    }
+  }
+  ```
+  
+  **Key Scripts**:
+  - `npm start`: Start Metro bundler
+  - `npm run android`: Launch on Android
+  - `npm run ios`: Launch on iOS
+  - `npm run web`: Launch web version
+</Accordion>
+
+<Accordion title="app.json">
+  **Path**: `app.json`
+  
+  Expo configuration for app metadata and platform-specific settings.
+  
+  ```json app.json
+  {
+    "expo": {
+      "name": "AgroVetsApp",
+      "slug": "AgroVetsApp",
+      "version": "1.0.0",
+      "orientation": "portrait",
+      "newArchEnabled": true,
+      "ios": {
+        "supportsTablet": true
+      },
+      "android": {
+        "edgeToEdgeEnabled": true,
+        "predictiveBackGestureEnabled": false
+      }
+    }
+  }
+  ```
+  
+  <Warning>
+    `newArchEnabled: true` enables React Native's new architecture for better performance.
+  </Warning>
+</Accordion>
+
+<Accordion title="tsconfig.json">
+  **Path**: `tsconfig.json`
+  
+  TypeScript compiler configuration.
+  
+  ```json tsconfig.json
+  {
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+      "strict": true
+    }
+  }
+  ```
+  
+  **Strict Mode**: Enabled for maximum type safety.
+</Accordion>
+
+## File Naming Conventions
+
+### Components
+
+- **Format**: PascalCase
+- **Extension**: `.tsx`
+- **Example**: `Button.tsx`, `HomeScreen.tsx`
+
+### Services & Utilities
+
+- **Format**: camelCase
+- **Extension**: `.ts`
+- **Example**: `api.ts`, `formatters.ts`
+
+### Types & Interfaces
+
+- **Format**: camelCase for files, PascalCase for types
+- **Extension**: `.ts`
+- **Example**: `types.ts` (file), `RootStackParamList` (type)
+
+### Index Files
+
+- **Purpose**: Barrel exports for cleaner imports
+- **Name**: `index.ts`
+- **Example**:
+
+```typescript
+// src/components/ui/index.ts
+export { default as Button } from './Button';
+export { default as Card } from './Card';
+```
+
+## Import Path Structure
+
+### Absolute vs Relative Imports
+
+<CodeGroup>
+
+```typescript Relative Imports (Current)
+import AppNavigator from './src/navigation/AppNavigator';
+import HomeScreen from '../screens/Home/HomeScreen';
+```
+
+```typescript Absolute Imports (Recommended)
+// Requires path aliases in tsconfig.json
+import AppNavigator from '@navigation/AppNavigator';
+import HomeScreen from '@screens/Home/HomeScreen';
+```
+
+</CodeGroup>
+
+<Note>
+  Consider configuring path aliases for cleaner imports as the project grows.
+</Note>
+
+## Growth Recommendations
+
+As the application scales, consider these structural enhancements:
+
+### Feature-Based Organization
+
+```
+src/
+├── features/
+│   ├── auth/
+│   │   ├── components/
+│   │   ├── screens/
+│   │   ├── services/
+│   │   └── hooks/
+│   ├── inventory/
+│   └── appointments/
+└── shared/
+    ├── components/
+    ├── hooks/
+    └── utils/
+```
+
+### State Management Structure
+
+```
+src/
+├── store/
+│   ├── slices/
+│   ├── hooks.ts
+│   └── index.ts
+└── contexts/
+    ├── AuthContext.tsx
+    └── ThemeContext.tsx
+```
+
+### Testing Structure
+
+```
+src/
+├── components/
+│   └── __tests__/
+├── screens/
+│   └── __tests__/
+└── services/
+    └── __tests__/
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Single Responsibility" icon="puzzle-piece">
+    Each file should have a single, well-defined purpose
+  </Card>
+  
+  <Card title="Co-location" icon="layer-group">
+    Keep related files close together (screen + styles + tests)
+  </Card>
+  
+  <Card title="Index Exports" icon="boxes-stacked">
+    Use index files for cleaner imports from directories
+  </Card>
+  
+  <Card title="Naming Consistency" icon="signature">
+    Follow established naming conventions consistently
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Card title="Navigation System" icon="compass" href="/architecture/navigation-system">
+  Learn how the navigation system is structured and works
+</Card>

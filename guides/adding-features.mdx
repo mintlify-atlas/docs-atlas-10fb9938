@@ -1,0 +1,620 @@
+---
+title: Adding Features
+description: Learn how to extend the AgroVets app with new screens, API integration, and state management
+---
+
+## Overview
+
+This guide walks you through extending the AgroVets app template with new features, including adding screens, integrating APIs, and managing state.
+
+## Adding a New Feature Screen
+
+<Steps>
+  <Step title="Create the screen folder and file">
+    ```bash
+    mkdir -p src/screens/Products
+    touch src/screens/Products/ProductsScreen.tsx
+    ```
+  </Step>
+  
+  <Step title="Create the screen component">
+    ```tsx src/screens/Products/ProductsScreen.tsx
+    import React from 'react';
+    import { View, Text, StyleSheet, FlatList } from 'react-native';
+    import { spacing, colors } from '../../theme';
+    
+    export default function ProductsScreen() {
+      const products = [
+        { id: '1', name: 'Product 1', price: 10.99 },
+        { id: '2', name: 'Product 2', price: 15.99 },
+      ];
+      
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>Products</Text>
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.productItem}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productPrice}>${item.price}</Text>
+              </View>
+            )}
+          />
+        </View>
+      );
+    }
+    
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+        padding: spacing.m,
+        backgroundColor: colors.background,
+      },
+      title: {
+        fontSize: 24,
+        fontWeight: '600',
+        marginBottom: spacing.m,
+        color: colors.text,
+      },
+      productItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: spacing.m,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 8,
+        marginBottom: spacing.s,
+      },
+      productName: {
+        fontSize: 16,
+        color: colors.text,
+      },
+      productPrice: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: colors.primary,
+      },
+    });
+    ```
+  </Step>
+  
+  <Step title="Update navigation types">
+    ```tsx src/navigation/types.ts
+    export type RootStackParamList = {
+      Home: undefined;
+      Profile: undefined;
+      Settings: undefined;
+      Products: undefined;  // Add new screen
+    };
+    ```
+  </Step>
+  
+  <Step title="Add to navigator">
+    ```tsx src/navigation/TabNavigator.tsx
+    import ProductsScreen from '../screens/Products/ProductsScreen';
+    
+    export default function TabNavigator() {
+      return (
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Products" component={ProductsScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Settings" component={SettingsScreen} />
+        </Tab.Navigator>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## API Integration
+
+### Setting Up API Service
+
+The app includes a basic API service at `src/services/api.ts`:
+
+```tsx src/services/api.ts
+// Servicios y llamadas a APIs
+
+export async function fetchExample() {
+  // placeholder: implementa fetch real según tu backend
+  return { ok: true };
+}
+```
+
+### Creating API Functions
+
+<Tabs>
+  <Tab title="Basic Fetch">
+    ```tsx src/services/api.ts
+    const API_BASE_URL = 'https://api.agrovets.app';
+    
+    export async function fetchProducts() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        throw error;
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="POST Request">
+    ```tsx src/services/api.ts
+    export async function createProduct(product: {
+      name: string;
+      price: number;
+    }) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(product),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create product');
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('Error creating product:', error);
+        throw error;
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="With Authentication">
+    ```tsx src/services/api.ts
+    import AsyncStorage from '@react-native-async-storage/async-storage';
+    
+    async function getAuthToken() {
+      return await AsyncStorage.getItem('authToken');
+    }
+    
+    export async function fetchUserProfile() {
+      try {
+        const token = await getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile');
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### Using API in Screens
+
+```tsx src/screens/Products/ProductsScreen.tsx
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { fetchProducts } from '../../services/api';
+
+export default function ProductsScreen() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    loadProducts();
+  }, []);
+  
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchProducts();
+      setProducts(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+  
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+        <Button onPress={loadProducts}>Retry</Button>
+      </View>
+    );
+  }
+  
+  return (
+    <FlatList
+      data={products}
+      renderItem={({ item }) => <ProductItem product={item} />}
+      keyExtractor={(item) => item.id}
+    />
+  );
+}
+```
+
+## State Management
+
+### Using React Hooks
+
+Create custom hooks in `src/hooks/`:
+
+```tsx src/hooks/useProducts.ts
+import { useState, useEffect } from 'react';
+import { fetchProducts } from '../services/api';
+
+export function useProducts() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    loadProducts();
+  }, []);
+  
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchProducts();
+      setProducts(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const refresh = () => {
+    loadProducts();
+  };
+  
+  return { products, loading, error, refresh };
+}
+```
+
+Use in screens:
+
+```tsx
+import { useProducts } from '../../hooks/useProducts';
+
+export default function ProductsScreen() {
+  const { products, loading, error, refresh } = useProducts();
+  
+  // Use the data in your component
+}
+```
+
+### Using Context for Global State
+
+<Steps>
+  <Step title="Create context">
+    ```tsx src/context/AppContext.tsx
+    import React, { createContext, useContext, useState } from 'react';
+    
+    interface AppContextType {
+      user: any;
+      setUser: (user: any) => void;
+      cart: any[];
+      addToCart: (item: any) => void;
+    }
+    
+    const AppContext = createContext<AppContextType | undefined>(undefined);
+    
+    export function AppProvider({ children }: { children: React.ReactNode }) {
+      const [user, setUser] = useState(null);
+      const [cart, setCart] = useState([]);
+      
+      const addToCart = (item: any) => {
+        setCart(prev => [...prev, item]);
+      };
+      
+      return (
+        <AppContext.Provider value={{ user, setUser, cart, addToCart }}>
+          {children}
+        </AppContext.Provider>
+      );
+    }
+    
+    export function useApp() {
+      const context = useContext(AppContext);
+      if (!context) {
+        throw new Error('useApp must be used within AppProvider');
+      }
+      return context;
+    }
+    ```
+  </Step>
+  
+  <Step title="Wrap app with provider">
+    ```tsx App.tsx
+    import { AppProvider } from './src/context/AppContext';
+    import AppNavigator from './src/navigation/AppNavigator';
+    
+    export default function App() {
+      return (
+        <AppProvider>
+          <AppNavigator />
+        </AppProvider>
+      );
+    }
+    ```
+  </Step>
+  
+  <Step title="Use in components">
+    ```tsx
+    import { useApp } from '../../context/AppContext';
+    
+    export default function ProductScreen({ product }) {
+      const { addToCart } = useApp();
+      
+      return (
+        <Button onPress={() => addToCart(product)}>
+          Add to Cart
+        </Button>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Adding Third-Party Libraries
+
+### Installing Packages
+
+```bash
+# Example: Adding axios for API calls
+npm install axios
+
+# Example: Adding date library
+npm install date-fns
+
+# Example: Adding icons
+npm install @expo/vector-icons
+```
+
+### Using Axios for API Calls
+
+```tsx src/services/api.ts
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'https://api.agrovets.app',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add request interceptor for auth
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Add response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Handle unauthorized
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const fetchProducts = async () => {
+  const response = await api.get('/products');
+  return response.data;
+};
+
+export const createProduct = async (product: any) => {
+  const response = await api.post('/products', product);
+  return response.data;
+};
+```
+
+## Data Persistence
+
+### Using AsyncStorage
+
+```tsx src/utils/storage.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const storage = {
+  async set(key: string, value: any) {
+    try {
+      await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error('Error saving to storage:', error);
+    }
+  },
+  
+  async get(key: string) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      console.error('Error reading from storage:', error);
+      return null;
+    }
+  },
+  
+  async remove(key: string) {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.error('Error removing from storage:', error);
+    }
+  },
+  
+  async clear() {
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+    }
+  },
+};
+```
+
+Use in components:
+
+```tsx
+import { storage } from '../../utils/storage';
+
+// Save data
+await storage.set('user', { id: 1, name: 'John' });
+
+// Read data
+const user = await storage.get('user');
+
+// Remove data
+await storage.remove('user');
+```
+
+## Form Handling
+
+```tsx src/screens/AddProduct/AddProductScreen.tsx
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert } from 'react-native';
+import { createProduct } from '../../services/api';
+
+export default function AddProductScreen({ navigation }) {
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const handleSubmit = async () => {
+    if (!name || !price) {
+      Alert.alert('Error', 'Please fill all fields');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await createProduct({
+        name,
+        price: parseFloat(price),
+      });
+      
+      Alert.alert('Success', 'Product created successfully');
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Product Name"
+        value={name}
+        onChangeText={setName}
+      />
+      
+      <TextInput
+        style={styles.input}
+        placeholder="Price"
+        value={price}
+        onChangeText={setPrice}
+        keyboardType="numeric"
+      />
+      
+      <Button 
+        title={loading ? 'Creating...' : 'Create Product'}
+        onPress={handleSubmit}
+        disabled={loading}
+      />
+    </View>
+  );
+}
+```
+
+## Best Practices
+
+<Tip>
+Create reusable hooks for common patterns like data fetching, forms, and authentication.
+</Tip>
+
+<Note>
+Keep business logic separate from UI components. Use services and hooks to organize your code.
+</Note>
+
+<Warning>
+Always handle loading and error states when making API calls to provide good user experience.
+</Warning>
+
+### Code Organization
+
+```
+src/
+├── components/     # Reusable UI components
+├── screens/        # Screen components
+├── navigation/     # Navigation configuration
+├── services/       # API calls and external services
+├── hooks/          # Custom React hooks
+├── context/        # React Context providers
+├── utils/          # Utility functions
+├── theme/          # Theme configuration
+└── types/          # TypeScript type definitions
+```
+
+### Error Handling
+
+```tsx
+try {
+  const data = await fetchData();
+  setData(data);
+} catch (error) {
+  if (error.response?.status === 404) {
+    setError('Not found');
+  } else if (error.response?.status === 500) {
+    setError('Server error');
+  } else {
+    setError('Something went wrong');
+  }
+}
+```
+
+## Next Steps
+
+- Review [screen creation patterns](/guides/screens)
+- Learn about [component architecture](/guides/components)
+- Explore [navigation best practices](/guides/navigation-patterns)
+- Understand [styling guidelines](/guides/styling-theming)

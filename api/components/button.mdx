@@ -1,0 +1,83 @@
+---
+title: 'Button'
+description: 'Primary button component for user interactions'
+---
+
+## Overview
+
+The `Button` component is a reusable, touchable button built on React Native's `TouchableOpacity`. It provides a consistent styling and interaction pattern across the AgroVets application.
+
+## Import
+
+```typescript
+import Button from '@/components/ui/Button';
+```
+
+## Props
+
+<ParamField path="children" type="React.ReactNode" required>
+  The content to display inside the button, typically text or icons.
+</ParamField>
+
+<ParamField path="onPress" type="() => void">
+  Callback function triggered when the button is pressed.
+</ParamField>
+
+## Usage
+
+### Basic Button
+
+```tsx
+import Button from '@/components/ui/Button';
+
+function MyComponent() {
+  const handlePress = () => {
+    console.log('Button pressed!');
+  };
+
+  return (
+    <Button onPress={handlePress}>
+      Click Me
+    </Button>
+  );
+}
+```
+
+### Without Handler
+
+```tsx
+<Button>
+  Static Label
+</Button>
+```
+
+## Styling
+
+The Button component uses the following default styles:
+
+- **Background Color**: `#0a84ff` (primary blue)
+- **Padding**: `10px` vertical, `16px` horizontal
+- **Border Radius**: `8px`
+- **Text Color**: `#fff` (white)
+- **Font Weight**: `600` (semi-bold)
+- **Active Opacity**: `0.8`
+
+<Note>
+  The Button component uses a fixed style from `StyleSheet.create()`. To customize appearance, you may need to modify the source file directly or create a variant.
+</Note>
+
+## Component Signature
+
+```typescript
+export default function Button({ 
+  children, 
+  onPress 
+}: { 
+  children: React.ReactNode; 
+  onPress?: () => void 
+}): JSX.Element
+```
+
+## Source
+
+Location: `src/components/ui/Button.tsx`

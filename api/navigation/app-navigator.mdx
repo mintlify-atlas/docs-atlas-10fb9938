@@ -1,0 +1,72 @@
+---
+title: 'AppNavigator'
+description: 'Root navigation component that wraps the app with NavigationContainer'
+---
+
+## Overview
+
+The `AppNavigator` component serves as the root navigation component for the AgroVets application. It wraps the entire navigation tree with React Navigation's `NavigationContainer` and initializes the stack navigator.
+
+## Usage
+
+```tsx
+import AppNavigator from './navigation/AppNavigator';
+
+export default function App() {
+  return <AppNavigator />;
+}
+```
+
+## Implementation
+
+```tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import StackNavigator from './StackNavigator';
+
+export default function AppNavigator() {
+  return (
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
+  );
+}
+```
+
+## Props
+
+This component does not accept any props.
+
+## Dependencies
+
+- `@react-navigation/native` - Provides the NavigationContainer
+- `StackNavigator` - The root stack navigator component
+
+## Navigation Structure
+
+The `AppNavigator` follows this hierarchy:
+
+1. **NavigationContainer** - Root container
+2. **StackNavigator** - Stack-based navigation
+3. **TabNavigator** - Bottom tab navigation (nested)
+
+<Note>
+The `NavigationContainer` should only be used once at the root of your app. All other navigators should be nested inside it.
+</Note>
+
+## Type Safety
+
+This component works with the `RootStackParamList` type definition to provide type-safe navigation throughout the app.
+
+```tsx
+export type RootStackParamList = {
+  Home: undefined;
+  Profile: undefined;
+  Settings: undefined;
+};
+```
+
+## Related
+
+- [StackNavigator](/api/navigation/stack-navigator)
+- [TabNavigator](/api/navigation/tab-navigator)

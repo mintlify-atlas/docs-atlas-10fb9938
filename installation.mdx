@@ -1,0 +1,224 @@
+---
+title: Installation
+description: Complete guide to installing and setting up AgroVets App on your development machine
+---
+
+# Installation
+
+This guide will walk you through the complete installation process for AgroVets App, including prerequisites, dependency installation, and troubleshooting common issues.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+<Steps>
+  <Step title="Node.js 16 or Higher">
+    AgroVets App requires Node.js version 16 or higher (16+ recommended).
+    
+    Download and install from [nodejs.org](https://nodejs.org/)
+    
+    Verify your installation:
+    ```bash
+    node --version
+    npm --version
+    ```
+  </Step>
+  
+  <Step title="Package Manager">
+    You'll need either npm (comes with Node.js) or yarn.
+    
+    This guide uses npm, which is included with Node.js.
+  </Step>
+  
+  <Step title="Expo CLI (Optional but Recommended)">
+    While not strictly required, Expo CLI provides a better development experience.
+    
+    It will be used automatically through npx commands.
+  </Step>
+</Steps>
+
+## Installation Steps
+
+<Steps>
+  <Step title="Clone the Repository">
+    First, clone the AgroVets App repository to your local machine:
+    
+    ```bash
+    git clone <repository-url>
+    cd agrovetsapp
+    ```
+    
+    <Note>
+    Replace `<repository-url>` with the actual URL of your AgroVets App repository.
+    </Note>
+  </Step>
+  
+  <Step title="Install Base Dependencies">
+    Install the core dependencies using npm:
+    
+    ```bash
+    npm install
+    ```
+    
+    This will install all dependencies listed in `package.json`, including:
+    - Expo SDK (~54.0.25)
+    - React (19.1.0)
+    - React Native (0.81.5)
+    - TypeScript (~5.9.2)
+  </Step>
+  
+  <Step title="Install React Navigation Dependencies">
+    The app uses React Navigation for routing. Install the required navigation packages:
+    
+    <Note>
+    Use `expo install` instead of `npm install` for these packages to ensure version compatibility with your Expo SDK.
+    </Note>
+    
+    ```bash
+    npx expo install @react-navigation/native react-native-screens react-native-safe-area-context react-native-gesture-handler
+    ```
+    
+    Then install the navigators:
+    
+    ```bash
+    npm install @react-navigation/native-stack @react-navigation/bottom-tabs
+    ```
+    
+    These packages provide:
+    - `@react-navigation/native` - Core navigation library
+    - `@react-navigation/native-stack` - Stack navigator
+    - `@react-navigation/bottom-tabs` - Bottom tab navigator
+    - `react-native-screens` - Native screen optimization
+    - `react-native-safe-area-context` - Safe area handling
+    - `react-native-gesture-handler` - Gesture support
+  </Step>
+  
+  <Step title="Clear Metro Cache">
+    After installing navigation dependencies, clear the Metro bundler cache:
+    
+    <CodeGroup>
+    ```bash Expo CLI
+    npx expo start -c
+    ```
+    
+    ```bash NPM Script
+    npm start -- --reset-cache
+    ```
+    </CodeGroup>
+    
+    <Tip>
+    Clearing the cache prevents issues with stale cached modules after installing new dependencies.
+    </Tip>
+  </Step>
+</Steps>
+
+## Verify Installation
+
+To verify everything is installed correctly, check your `package.json` dependencies:
+
+```json package.json
+{
+  "dependencies": {
+    "@react-navigation/bottom-tabs": "^7.8.8",
+    "@react-navigation/native": "^7.1.22",
+    "@react-navigation/native-stack": "^7.8.2",
+    "expo": "~54.0.25",
+    "expo-status-bar": "~3.0.8",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "typescript": "~5.9.2"
+  }
+}
+```
+
+## Troubleshooting
+
+### Corrupted Installation
+
+If you encounter issues with corrupted installations, clean and reinstall:
+
+<CodeGroup>
+```bash PowerShell
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+npm install
+```
+
+```bash Bash/Terminal
+rm -rf node_modules
+rm package-lock.json
+npm install
+```
+</CodeGroup>
+
+### Metro Bundler Issues
+
+If Metro bundler shows errors about missing modules:
+
+```bash
+npx expo start -c
+```
+
+<Warning>
+Always use `expo install` for Expo-specific packages to ensure compatibility with your Expo SDK version.
+</Warning>
+
+### Version Conflicts
+
+If you see peer dependency warnings, ensure you're using compatible versions:
+
+- Node.js 16 or higher
+- Expo SDK ~54.0.25
+- React 19.1.0
+- React Native 0.81.5
+
+## Optional Enhancements
+
+### Enable React Native Screens Optimization
+
+For better performance and compatibility, enable native screen optimization in your `App.tsx`:
+
+```tsx App.tsx
+import { enableScreens } from 'react-native-screens';
+enableScreens();
+```
+
+### Install Vector Icons
+
+If you plan to use icons in your tab navigation:
+
+```bash
+npx expo install @expo/vector-icons
+```
+
+### Gesture Handler Setup
+
+For proper gesture handler functionality (required for drawer navigation), wrap your app with `GestureHandlerRootView`:
+
+```tsx App.tsx
+import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import AppNavigator from './src/navigation/AppNavigator';
+
+export default function App() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AppNavigator />
+    </GestureHandlerRootView>
+  );
+}
+```
+
+## Next Steps
+
+Now that you have everything installed, head over to the [Quickstart](/quickstart) guide to run the app and explore its features.
+
+<Card title="Quickstart Guide" icon="rocket" href="/quickstart">
+  Learn how to start the development server and explore the app
+</Card>

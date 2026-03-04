@@ -1,0 +1,500 @@
+---
+title: Navigation Patterns
+description: Learn how to implement navigation in the AgroVets app using React Navigation
+---
+
+## Overview
+
+The AgroVets app uses [React Navigation](https://reactnavigation.org/) for handling navigation between screens. The app supports stack, tab, and drawer navigation patterns.
+
+## Navigation Structure
+
+The navigation system is organized in `src/navigation/`:
+
+```
+src/navigation/
+├── AppNavigator.tsx      # Root navigator
+├── StackNavigator.tsx    # Stack navigation
+├── TabNavigator.tsx      # Bottom tab navigation
+├── DrawerNavigator.tsx   # Drawer navigation
+└── types.ts              # Navigation type definitions
+```
+
+## Navigation Setup
+
+### App Navigator
+
+The root navigator wraps the entire app:
+
+```tsx src/navigation/AppNavigator.tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import StackNavigator from './StackNavigator';
+
+export default function AppNavigator() {
+  return (
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
+  );
+}
+```
+
+### Stack Navigator
+
+Defines the main navigation stack:
+
+```tsx src/navigation/StackNavigator.tsx
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TabNavigator from './TabNavigator';
+import { RootStackParamList } from './types';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function StackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={TabNavigator} />
+    </Stack.Navigator>
+  );
+}
+```
+
+### Tab Navigator
+
+Configures bottom tab navigation:
+
+```tsx src/navigation/TabNavigator.tsx
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from '../screens/Home/HomeScreen';
+import ProfileScreen from '../screens/Profile/ProfileScreen';
+import SettingsScreen from '../screens/Settings/SettingsScreen';
+import { RootStackParamList } from './types';
+
+const Tab = createBottomTabNavigator<RootStackParamList>();
+
+export default function TabNavigator() {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
+  );
+}
+```
+
+## Type Definitions
+
+Define navigation types for type safety:
+
+```tsx src/navigation/types.ts
+export type RootStackParamList = {
+  Home: undefined;
+  Profile: undefined;
+  Settings: undefined;
+};
+```
+
+## Navigation Patterns
+
+<Tabs>
+  <Tab title="Basic Navigation">
+    Navigate to another screen:
+    
+    ```tsx
+    import { useNavigation } from '@react-navigation/native';
+    import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+    import { RootStackParamList } from '../navigation/types';
+    
+    type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+    
+    export default function MyScreen() {
+      const navigation = useNavigation<NavigationProp>();
+      
+      const goToProfile = () => {
+        navigation.navigate('Profile');
+      };
+      
+      return (
+        <Button onPress={goToProfile}>Go to Profile</Button>
+      );
+    }
+    ```
+  </Tab>
+  
+  <Tab title="With Parameters">
+    Pass parameters between screens:
+    
+    ```tsx
+    // Update types
+    export type RootStackParamList = {
+      Home: undefined;
+      Profile: { userId: string };
+      Settings: undefined;
+    };
+    
+    // Navigate with params
+    navigation.navigate('Profile', { userId: '123' });
+    
+    // Receive params
+    import { useRoute, RouteProp } from '@react-navigation/native';
+    
+    type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
+    
+    export default function ProfileScreen() {
+      const route = useRoute<ProfileRouteProp>();
+      const { userId } = route.params;
+      
+      return <Text>User ID: {userId}</Text>;
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Go Back">
+    Navigate back to previous screen:
+    
+    ```tsx
+    import { useNavigation } from '@react-navigation/native';
+    
+    export default function MyScreen() {
+      const navigation = useNavigation();
+      
+      return (
+        <Button onPress={() => navigation.goBack()}>
+          Go Back
+        </Button>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Adding New Screens to Navigation
+
+<Steps>
+  <Step title="Update navigation types">
+    Add your screen to the type definitions:
+    
+    ```tsx src/navigation/types.ts
+    export type RootStackParamList = {
+      Home: undefined;
+      Profile: undefined;
+      Settings: undefined;
+      Details: { itemId: string };  // New screen with params
+    };
+    ```
+  </Step>
+  
+  <Step title="Add to navigator">
+    Register the screen in the appropriate navigator:
+    
+    ```tsx src/navigation/StackNavigator.tsx
+    import DetailsScreen from '../screens/Details/DetailsScreen';
+    
+    export default function StackNavigator() {
+      return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={TabNavigator} />
+          <Stack.Screen name="Details" component={DetailsScreen} />
+        </Stack.Navigator>
+      );
+    }
+    ```
+  </Step>
+  
+  <Step title="Navigate to the screen">
+    Use the navigation hook to navigate:
+    
+    ```tsx
+    navigation.navigate('Details', { itemId: '42' });
+    ```
+  </Step>
+</Steps>
+
+## Screen Options
+
+### Header Configuration
+
+```tsx
+<Stack.Screen 
+  name="Profile" 
+  component={ProfileScreen}
+  options={{
+    title: 'User Profile',
+    headerShown: true,
+    headerStyle: {
+      backgroundColor: colors.primary,
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  }}
+/>
+```
+
+### Tab Bar Icons
+
+```tsx
+import { Ionicons } from '@expo/vector-icons';
+
+<Tab.Navigator
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ focused, color, size }) => {
+      let iconName;
+      
+      if (route.name === 'Home') {
+        iconName = focused ? 'home' : 'home-outline';
+      } else if (route.name === 'Profile') {
+        iconName = focused ? 'person' : 'person-outline';
+      } else if (route.name === 'Settings') {
+        iconName = focused ? 'settings' : 'settings-outline';
+      }
+      
+      return <Ionicons name={iconName} size={size} color={color} />;
+    },
+    tabBarActiveTintColor: colors.primary,
+    tabBarInactiveTintColor: 'gray',
+  })}
+>
+  {/* Tab screens */}
+</Tab.Navigator>
+```
+
+## Advanced Navigation Patterns
+
+### Nested Navigators
+
+```tsx
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const ProfileStack = createNativeStackNavigator();
+
+function ProfileNavigator() {
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen name="ProfileHome" component={ProfileScreen} />
+      <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+    </ProfileStack.Navigator>
+  );
+}
+
+// Use in Tab Navigator
+<Tab.Screen name="Profile" component={ProfileNavigator} />
+```
+
+### Modal Presentation
+
+```tsx
+<Stack.Navigator>
+  <Stack.Screen name="Home" component={HomeScreen} />
+  <Stack.Screen 
+    name="Modal" 
+    component={ModalScreen}
+    options={{
+      presentation: 'modal',
+      headerShown: true,
+      title: 'Modal Screen',
+    }}
+  />
+</Stack.Navigator>
+```
+
+### Custom Header
+
+```tsx
+import { colors, spacing } from '../theme';
+
+function CustomHeader({ title, onBack }) {
+  return (
+    <View style={{
+      height: 60,
+      backgroundColor: colors.primary,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: spacing.m,
+    }}>
+      <TouchableOpacity onPress={onBack}>
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+      <Text style={{
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: '600',
+        marginLeft: spacing.m,
+      }}>
+        {title}
+      </Text>
+    </View>
+  );
+}
+
+<Stack.Screen
+  name="Details"
+  component={DetailsScreen}
+  options={{
+    header: ({ navigation }) => (
+      <CustomHeader 
+        title="Details" 
+        onBack={() => navigation.goBack()} 
+      />
+    ),
+  }}
+/>
+```
+
+## Navigation Hooks
+
+<CodeGroup>
+```tsx useNavigation
+import { useNavigation } from '@react-navigation/native';
+
+const navigation = useNavigation();
+navigation.navigate('Profile');
+navigation.goBack();
+navigation.reset({
+  index: 0,
+  routes: [{ name: 'Home' }],
+});
+```
+
+```tsx useRoute
+import { useRoute } from '@react-navigation/native';
+
+const route = useRoute();
+const { params } = route;
+```
+
+```tsx useFocusEffect
+import { useFocusEffect } from '@react-navigation/native';
+
+useFocusEffect(
+  React.useCallback(() => {
+    // Do something when screen comes into focus
+    fetchData();
+    
+    return () => {
+      // Cleanup when screen loses focus
+    };
+  }, [])
+);
+```
+
+```tsx useIsFocused
+import { useIsFocused } from '@react-navigation/native';
+
+const isFocused = useIsFocused();
+
+if (isFocused) {
+  // Screen is focused
+}
+```
+</CodeGroup>
+
+## Deep Linking
+
+Configure deep linking for your app:
+
+```tsx src/navigation/AppNavigator.tsx
+import { NavigationContainer } from '@react-navigation/native';
+
+const linking = {
+  prefixes: ['agrovets://', 'https://agrovets.app'],
+  config: {
+    screens: {
+      Home: 'home',
+      Profile: 'profile/:userId',
+      Settings: 'settings',
+    },
+  },
+};
+
+export default function AppNavigator() {
+  return (
+    <NavigationContainer linking={linking}>
+      <StackNavigator />
+    </NavigationContainer>
+  );
+}
+```
+
+<Tip>
+Test deep links using: `npx uri-scheme open agrovets://profile/123 --android`
+</Tip>
+
+## Best Practices
+
+<Note>
+Always define navigation types for TypeScript autocomplete and type safety.
+</Note>
+
+### Do's
+
+- Use typed navigation hooks for type safety
+- Keep navigation logic in screens, not components
+- Use `useFocusEffect` for screen-specific side effects
+- Define all screen params in type definitions
+- Use meaningful screen names
+
+### Don'ts
+
+- Don't pass functions as navigation params (use callbacks)
+- Don't nest too many navigators (max 2-3 levels)
+- Don't access navigation outside of screens
+- Don't use `navigation.navigate` in render methods
+
+## Common Navigation Scenarios
+
+### Authentication Flow
+
+```tsx
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator();
+
+export default function AppNavigator() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isSignedIn ? (
+          <Stack.Screen name="Main" component={TabNavigator} />
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+```
+
+### Reset Navigation
+
+```tsx
+import { CommonActions } from '@react-navigation/native';
+
+// Reset to Home screen, clearing navigation stack
+navigation.dispatch(
+  CommonActions.reset({
+    index: 0,
+    routes: [{ name: 'Home' }],
+  })
+);
+```
+
+<Warning>
+Use reset carefully - it clears the navigation history and users won't be able to go back.
+</Warning>
+
+## Next Steps
+
+- Learn about [creating screens](/guides/screens)
+- Explore [building components](/guides/components)
+- Understand [adding new features](/guides/adding-features)

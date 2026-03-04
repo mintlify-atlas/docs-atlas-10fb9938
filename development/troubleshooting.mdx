@@ -1,0 +1,396 @@
+---
+title: Troubleshooting
+description: Common issues and solutions when developing AgroVetsApp
+---
+
+## Installation Issues
+
+### Dependencies Not Installing
+
+<Accordion title="Corrupted node_modules or package-lock.json">
+  **Problem**: Dependencies fail to install or show version conflicts.
+
+  **Solution**: Clean install all dependencies:
+
+  ```bash
+  # Remove existing installations
+  rm -rf node_modules
+  rm package-lock.json
+
+  # Reinstall
+  npm install
+  ```
+
+  <Tip>
+    On Windows PowerShell, use:
+    ```powershell
+    Remove-Item -Recurse -Force node_modules
+    Remove-Item -Force package-lock.json
+    npm install
+    ```
+  </Tip>
+</Accordion>
+
+<Accordion title="Navigation Dependencies Issues">
+  **Problem**: React Navigation packages not compatible with current Expo SDK.
+
+  **Solution**: Use `expo install` to ensure version compatibility:
+
+  ```bash
+  npx expo install @react-navigation/native react-native-screens react-native-safe-area-context react-native-gesture-handler
+  npm install @react-navigation/native-stack @react-navigation/bottom-tabs
+  ```
+
+  After installation, clear the cache:
+  ```bash
+  expo start -c
+  ```
+</Accordion>
+
+### Peer Dependency Warnings
+
+<Note>
+  The project uses React 19.1.0 with React Native 0.81.5. Some packages may show peer dependency warnings, but they are generally safe to ignore if the app runs correctly.
+</Note>
+
+## Metro Bundler Issues
+
+### Cache-Related Problems
+
+<Accordion title="Stale or corrupted Metro cache">
+  **Symptoms**:
+  - App shows old code after making changes
+  - Unexpected errors that don't match your code
+  - "Unable to resolve module" errors for existing files
+
+  **Solution**: Clear the Metro bundler cache:
+
+  <CodeGroup>
+  ```bash Expo CLI
+  expo start -c
+  ```
+
+  ```bash npm
+  npm start -- --reset-cache
+  ```
+
+  ```bash Manual
+  # Clear Metro cache manually
+  rm -rf .expo
+  rm -rf $TMPDIR/metro-*
+  rm -rf $TMPDIR/react-*
+  ```
+  </CodeGroup>
+</Accordion>
+
+### Port Already in Use
+
+<Accordion title="Port 8081 or 19000 already in use">
+  **Problem**: Metro bundler can't start because the port is occupied.
+
+  **Solution**:
+
+  <CodeGroup>
+  ```bash Find Process (macOS/Linux)
+  lsof -i :8081
+  kill -9 <PID>
+  ```
+
+  ```bash Find Process (Windows)
+  netstat -ano | findstr :8081
+  taskkill /PID <PID> /F
+  ```
+
+  ```bash Use Different Port
+  expo start --port 8088
+  ```
+  </CodeGroup>
+</Accordion>
+
+## React Navigation Issues
+
+### GestureHandlerRootView Not Configured
+
+<Accordion title="Gesture handler errors or drawer/swipe not working">
+  **Problem**: `react-native-gesture-handler` requires proper setup.
+
+  **Current Implementation**: The app currently doesn't wrap with `GestureHandlerRootView` in `App.tsx:1`.
+
+  **Solution**: Update `App.tsx` to wrap the app:
+
+  ```tsx
+  import React from 'react';
+  import { GestureHandlerRootView } from 'react-native-gesture-handler';
+  import { StatusBar } from 'expo-status-bar';
+  import AppNavigator from './src/navigation/AppNavigator';
+
+  export default function App() {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AppNavigator />
+        <StatusBar style="auto" />
+      </GestureHandlerRootView>
+    );
+  }
+  ```
+
+  <Warning>
+    This is required for drawer navigation and gesture-based navigation to work properly.
+  </Warning>
+</Accordion>
+
+### Screen Optimization
+
+<Accordion title="Enable react-native-screens for better performance">
+  **Problem**: Navigation transitions are slow or janky.
+
+  **Solution**: Enable native screen optimization by updating `App.tsx`:
+
+  ```tsx
+  import { enableScreens } from 'react-native-screens';
+  
+  enableScreens();
+  
+  export default function App() {
+    // ... rest of your app
+  }
+  ```
+
+  <Tip>
+    This should be called before any navigation code runs, ideally at the top of your App component file.
+  </Tip>
+</Accordion>
+
+## TypeScript Issues
+
+### Type Errors
+
+<Accordion title="TypeScript strict mode errors">
+  **Configuration**: The project uses strict TypeScript (`tsconfig.json:4`):
+
+  ```json
+  {
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+      "strict": true
+    }
+  }
+  ```
+
+  **Common Issues**:
+
+  1. **Implicit any types**:
+     ```tsx
+     // Bad
+     function handlePress(data) { }
+
+     // Good
+     function handlePress(data: unknown) { }
+     ```
+
+  2. **Null/undefined checks**:
+     ```tsx
+     // Bad
+     const user = getUser();
+     console.log(user.name);
+
+     // Good
+     const user = getUser();
+     if (user) {
+       console.log(user.name);
+     }
+     ```
+
+  3. **Navigation props typing**:
+     ```tsx
+     import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+     import type { RootStackParamList } from '../navigation/types';
+
+     type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+     export default function HomeScreen({ navigation }: Props) {
+       // navigation is now properly typed
+     }
+     ```
+</Accordion>
+
+### Module Resolution Issues
+
+<Accordion title="Cannot find module errors">
+  **Problem**: TypeScript can't resolve module imports.
+
+  **Solution**:
+
+  1. Ensure the file extension is correct (.ts vs .tsx)
+  2. Check import paths are correct
+  3. Restart TypeScript server in your IDE
+  4. Clear Metro cache and restart
+
+  ```bash
+  # Clear everything
+  rm -rf node_modules
+  rm package-lock.json
+  npm install
+  expo start -c
+  ```
+</Accordion>
+
+## Platform-Specific Issues
+
+### Android
+
+<Accordion title="App won't install on Android device/emulator">
+  **Solutions**:
+
+  1. **Check ADB connection**:
+     ```bash
+     adb devices
+     ```
+     You should see your device/emulator listed.
+
+  2. **Enable USB debugging** on your Android device:
+     - Settings → About Phone → Tap "Build Number" 7 times
+     - Settings → Developer Options → Enable USB Debugging
+
+  3. **Reverse Metro port**:
+     ```bash
+     adb reverse tcp:8081 tcp:8081
+     ```
+
+  4. **Clear app data**:
+     ```bash
+     adb shell pm clear host.exp.exponent
+     ```
+</Accordion>
+
+<Accordion title="Red screen or app crashes on Android">
+  **Common causes**:
+
+  1. **Out of memory**: Close other apps or increase emulator RAM
+  2. **Incompatible architecture**: Ensure emulator uses x86_64 or arm64-v8a
+  3. **Missing native dependencies**: Rebuild the app:
+     ```bash
+     expo start -c
+     npm run android
+     ```
+</Accordion>
+
+### iOS
+
+<Accordion title="iOS Simulator not opening">
+  **Solutions**:
+
+  1. **Accept Xcode license**:
+     ```bash
+     sudo xcodebuild -license accept
+     ```
+
+  2. **Install Command Line Tools**:
+     ```bash
+     xcode-select --install
+     ```
+
+  3. **List available simulators**:
+     ```bash
+     xcrun simctl list devices
+     ```
+
+  4. **Open Simulator manually**:
+     ```bash
+     open -a Simulator
+     ```
+     Then run `npm run ios` again.
+</Accordion>
+
+<Accordion title="iOS build fails">
+  **Common solutions**:
+
+  1. **Clean derived data**:
+     ```bash
+     rm -rf ~/Library/Developer/Xcode/DerivedData
+     ```
+
+  2. **Reset Simulator**:
+     - Open Simulator
+     - Device → Erase All Content and Settings
+
+  3. **Restart Metro and rebuild**:
+     ```bash
+     expo start -c
+     npm run ios
+     ```
+</Accordion>
+
+### Web
+
+<Accordion title="Web build errors or blank page">
+  **Solutions**:
+
+  1. **Clear browser cache** and reload
+  
+  2. **Check console** for errors (F12 in most browsers)
+  
+  3. **Ensure web-compatible code**:
+     - Some React Native components don't work on web
+     - Use platform-specific code when needed:
+       ```tsx
+       import { Platform } from 'react-native';
+
+       if (Platform.OS === 'web') {
+         // Web-specific code
+       }
+       ```
+
+  4. **Restart with clean cache**:
+     ```bash
+     expo start -c --web
+     ```
+</Accordion>
+
+## Performance Issues
+
+### Slow Development Server
+
+<Accordion title="Metro bundler takes too long to start or reload">
+  **Solutions**:
+
+  1. **Exclude unnecessary files** from Metro by creating `metro.config.js`:
+     ```js
+     const { getDefaultConfig } = require('expo/metro-config');
+
+     const config = getDefaultConfig(__dirname);
+
+     config.resolver.blacklistRE = /(docs|build|android|ios)\/.*$/;
+
+     module.exports = config;
+     ```
+
+  2. **Increase Node memory**:
+     ```bash
+     export NODE_OPTIONS=--max_old_space_size=4096
+     npm start
+     ```
+
+  3. **Use watchman** (macOS/Linux):
+     ```bash
+     brew install watchman
+     ```
+</Accordion>
+
+## Getting Help
+
+If you're still experiencing issues:
+
+1. Check the [Expo documentation](https://docs.expo.dev/)
+2. Review [React Navigation docs](https://reactnavigation.org/docs/getting-started)
+3. Search [Stack Overflow](https://stackoverflow.com/questions/tagged/expo) for similar issues
+4. Check the project's GitHub issues
+
+<Note>
+  When reporting issues, include:
+  - Your operating system and version
+  - Node.js and npm versions (`node -v`, `npm -v`)
+  - Expo SDK version (from `package.json`)
+  - Complete error messages
+  - Steps to reproduce the issue
+</Note>

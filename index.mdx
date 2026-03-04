@@ -1,97 +1,222 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+mode: "custom"
 ---
 
-## Setting up
+<div className="relative overflow-hidden bg-gradient-to-b from-[#0a84ff] to-[#0066cc] dark:from-[#0066cc] dark:to-[#004899]">
+  <div className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="grid lg:grid-cols-12 gap-8 items-center">
+      <div className="lg:col-span-7">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+          AgroVets App Documentation
+        </h1>
+        <p className="text-xl text-white/90 mb-8 max-w-2xl">
+          Build powerful cross-platform mobile applications with this React Native starter template. Get started with Expo, TypeScript, and React Navigation v7.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <a 
+            href="/quickstart" 
+            className="inline-flex items-center px-6 py-3 rounded-lg bg-white text-[#0a84ff] font-semibold hover:bg-gray-100 transition-colors no-underline"
+          >
+            Get Started
+          </a>
+          <a 
+            href="/architecture/overview" 
+            className="inline-flex items-center px-6 py-3 rounded-lg border-2 border-white/30 bg-white/10 text-white font-semibold hover:bg-white/20 transition-colors no-underline"
+          >
+            View Architecture
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-Get your documentation site up and running in minutes.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Quick Start</h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">Get your React Native app running in minutes</p>
+  
+  <Steps>
+    <Step title="Install dependencies">
+      Clone the repository and install all required packages with npm.
+      
+      ```bash
+      git clone https://github.com/JeyFernandez/AgroVetsApp.git
+      cd AgroVetsApp
+      npm install
+      ```
+    </Step>
+    
+    <Step title="Start the development server">
+      Launch Expo to preview your app on iOS, Android, or web.
+      
+      ```bash
+      npm start
+      ```
+      
+      <Note>
+        Press `i` for iOS simulator, `a` for Android emulator, or scan the QR code with the Expo Go app on your device.
+      </Note>
+    </Step>
+    
+    <Step title="Explore the structure">
+      Navigate through the pre-built screens and components to understand the architecture.
+      
+      ```bash
+      src/
+      ├── navigation/    # Navigation setup (Stack, Tab, Drawer)
+      ├── screens/       # Screen components (Home, Profile, Settings)
+      ├── components/    # Reusable UI components
+      └── theme/         # Theme configuration and styling
+      ```
+    </Step>
+  </Steps>
+</div>
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Explore by Topic</h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">Deep dive into specific areas of the application</p>
+  
+  <CardGroup cols={2}>
     <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+      title="Architecture Overview"
+      icon="sitemap"
+      href="/architecture/overview"
+    >
+      Understand the project structure and design decisions behind AgroVets App
+    </Card>
+    <Card
+      title="Navigation System"
+      icon="route"
+      href="/architecture/navigation-system"
+    >
+      Learn how Stack, Tab, and Drawer navigation work together
+    </Card>
+    <Card
+      title="Building Screens"
+      icon="mobile-screen"
+      href="/guides/screens"
+    >
+      Create new screens and connect them to the navigation system
+    </Card>
+    <Card
+      title="Styling & Theming"
+      icon="palette"
+      href="/guides/styling-theming"
+    >
+      Customize colors, spacing, and styles throughout your app
+    </Card>
+    <Card
+      title="Components"
+      icon="puzzle-piece"
+      href="/guides/components"
+    >
+      Build and use reusable UI components
+    </Card>
+    <Card
+      title="Adding Features"
+      icon="plus"
+      href="/guides/adding-features"
+    >
+      Extend the template with authentication, API integration, and more
+    </Card>
+  </CardGroup>
+</div>
 
-## Create beautiful pages
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Key Features</h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">Everything you need to build a production-ready mobile app</p>
+  
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-[#0a84ff]/10 dark:bg-[#0a84ff]/20 flex items-center justify-center">
+          <span className="text-xl">⚡</span>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Expo SDK 54</h3>
+      </div>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Built on the latest Expo SDK with access to native APIs and over-the-air updates
+      </p>
+    </div>
+    
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-[#0a84ff]/10 dark:bg-[#0a84ff]/20 flex items-center justify-center">
+          <span className="text-xl">📘</span>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">TypeScript</h3>
+      </div>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Full TypeScript support with strict mode enabled for type safety
+      </p>
+    </div>
+    
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-[#0a84ff]/10 dark:bg-[#0a84ff]/20 flex items-center justify-center">
+          <span className="text-xl">🧭</span>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">React Navigation v7</h3>
+      </div>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Pre-configured Stack, Tab, and Drawer navigation ready to customize
+      </p>
+    </div>
+    
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-[#0a84ff]/10 dark:bg-[#0a84ff]/20 flex items-center justify-center">
+          <span className="text-xl">📱</span>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cross-Platform</h3>
+      </div>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Build once, deploy to iOS, Android, and web with a single codebase
+      </p>
+    </div>
+  </div>
+</div>
 
-Everything you need to create world-class documentation.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">API Reference</h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">Detailed documentation for all components and utilities</p>
+  
+  <CardGroup cols={3}>
+    <Card
+      title="Navigation"
+      icon="compass"
+      href="/api/navigation/app-navigator"
+    >
+      Navigator components and configuration
+    </Card>
+    <Card
+      title="Components"
+      icon="cube"
+      href="/api/components/button"
+    >
+      UI component API reference
+    </Card>
+    <Card
+      title="Theme System"
+      icon="paintbrush"
+      href="/api/theme"
+    >
+      Colors, spacing, and style utilities
+    </Card>
+  </CardGroup>
+</div>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="p-8 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-gradient-to-br from-gray-50 to-white dark:from-[#1a1d27] dark:to-[#242838]">
+    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Ready to build?</h2>
+    <p className="text-base text-gray-600 dark:text-gray-400 mb-6">
+      Start building your mobile app with AgroVets App starter template
+    </p>
+    <a 
+      href="/installation" 
+      className="inline-flex items-center px-6 py-3 rounded-lg bg-[#0a84ff] text-white font-semibold hover:bg-[#0066cc] transition-colors no-underline"
+    >
+      Get Started →
+    </a>
+  </div>
+</div>

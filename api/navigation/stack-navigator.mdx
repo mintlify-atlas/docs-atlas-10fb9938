@@ -1,0 +1,118 @@
+---
+title: 'StackNavigator'
+description: 'Native stack navigator for managing screen transitions and navigation flow'
+---
+
+## Overview
+
+The `StackNavigator` component implements React Navigation's native stack navigator pattern. It manages the main navigation flow of the AgroVets application using platform-native navigation primitives for optimal performance.
+
+## Usage
+
+```tsx
+import StackNavigator from './navigation/StackNavigator';
+import { NavigationContainer } from '@react-navigation/native';
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
+  );
+}
+```
+
+## Implementation
+
+```tsx
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TabNavigator from './TabNavigator';
+import { RootStackParamList } from './types';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function StackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={TabNavigator} />
+    </Stack.Navigator>
+  );
+}
+```
+
+## Props
+
+This component does not accept any props.
+
+## Configuration
+
+### Screen Options
+
+<ParamField path="headerShown" type="boolean" default="false">
+  Controls whether the navigation header is displayed. Currently set to `false` to hide headers globally.
+</ParamField>
+
+## Type Definition
+
+The navigator uses the `RootStackParamList` type for type-safe navigation:
+
+```tsx
+import { RootStackParamList } from './types';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+```
+
+### RootStackParamList
+
+```tsx
+export type RootStackParamList = {
+  Home: undefined;
+  Profile: undefined;
+  Settings: undefined;
+};
+```
+
+Each key represents a screen name, and the value represents the params type for that screen. `undefined` means the screen doesn't accept any params.
+
+## Screens
+
+### Home Screen
+
+<ParamField path="name" type="string" default="Home">
+  The Home screen is the initial screen and renders the `TabNavigator` component, which provides bottom tab navigation.
+</ParamField>
+
+## Navigation Methods
+
+When using this navigator, you can navigate between screens using:
+
+```tsx
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from './navigation/types';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+function MyComponent() {
+  const navigation = useNavigation<NavigationProp>();
+  
+  // Navigate to a screen
+  navigation.navigate('Home');
+}
+```
+
+<Note>
+The `createNativeStackNavigator` uses native navigation primitives (UINavigationController on iOS, Fragment on Android) for better performance compared to the JS-based stack navigator.
+</Note>
+
+## Dependencies
+
+- `@react-navigation/native-stack` - Native stack navigator
+- `TabNavigator` - Nested bottom tab navigator
+- `RootStackParamList` - Type definitions
+
+## Related
+
+- [AppNavigator](/api/navigation/app-navigator)
+- [TabNavigator](/api/navigation/tab-navigator)
