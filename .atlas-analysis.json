@@ -1,0 +1,101 @@
+{
+  "projectType": "frontend",
+  "projectName": "AgroVets App",
+  "projectDescription": "React Native starter template for building the AgroVets mobile application with Expo and TypeScript",
+  "theme": "palm",
+  "primaryColor": "#0a84ff",
+  "lightColor": "#5eb0ff",
+  "darkColor": "#0066cc",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "architecture/overview",
+              "architecture/project-structure",
+              "architecture/navigation-system"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/screens",
+              "guides/components",
+              "guides/styling-theming",
+              "guides/navigation-patterns",
+              "guides/adding-features"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "development/running-app",
+              "development/troubleshooting",
+              "development/best-practices"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Navigation",
+            "pages": [
+              "api/navigation/app-navigator",
+              "api/navigation/stack-navigator",
+              "api/navigation/tab-navigator",
+              "api/navigation/drawer-navigator"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "api/components/button"
+            ]
+          },
+          {
+            "group": "Core",
+            "pages": [
+              "api/theme",
+              "api/services",
+              "api/utils"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "React Native with Expo SDK 54",
+    "TypeScript support with strict mode",
+    "React Navigation v7 (Stack, Tab, Drawer)",
+    "Organized project structure with screens and components",
+    "Built-in theme system with colors and spacing",
+    "Cross-platform support (iOS, Android, Web)"
+  ],
+  "publicApiSurface": [
+    "AppNavigator",
+    "StackNavigator",
+    "TabNavigator",
+    "DrawerNavigator",
+    "HomeScreen",
+    "ProfileScreen",
+    "SettingsScreen",
+    "Button",
+    "colors",
+    "spacing",
+    "fetchExample"
+  ]
+}
